@@ -1,38 +1,18 @@
-import { useCallback, useState } from "react";
-import { TempleWallet } from "@temple-wallet/dapp";
+import { observer } from "mobx-react-lite";
 
 import { BaseButton } from "ui/components";
 
 import { Container, InfoLine } from "./styled";
+import { useAppStores } from "store";
 
-export default () => {
-  const [walletInfo, setWalletInfo] = useState({
-    address: "",
-    balance: 0,
-  });
-
-  const connectHandler = useCallback(async () => {
-    const available = await TempleWallet.isAvailable();
-    if (!available) {
-      throw new Error("Temple Wallet not installed");
-    }
-    const wallet = new TempleWallet("Farkle");
-    await wallet.connect("granadanet");
-    const tezos = wallet.toTezos();
-    const address = await tezos.wallet.pkh();
-    const balance = await tezos.tz.getBalance(address);
-
-    setWalletInfo({
-      address,
-      balance: balance.toNumber(),
-    });
-  }, []);
+export default observer(() => {
+  const { tezosStore } = useAppStores();
 
   return (
     <Container>
-      <InfoLine>Address: {walletInfo?.address}</InfoLine>
-      <InfoLine>Balance: {walletInfo?.balance}</InfoLine>
-      <BaseButton onClick={connectHandler}>Connect</BaseButton>
+      <InfoLine>Address: {tezosStore.address}</InfoLine>
+      <InfoLine>Balance: {tezosStore.balance}</InfoLine>
+      <BaseButton onClick={tezosStore.connect}>Connect</BaseButton>
     </Container>
   );
-};
+});

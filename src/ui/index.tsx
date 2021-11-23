@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components";
-import { ErrorBoundary } from "react-error-boundary";
+
+import RootStore, { RootStoreContext } from "store";
 
 import { MainPage } from "./pages";
 
@@ -12,13 +13,15 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const rootStore = new RootStore();
+
 export default () => {
   return (
     <>
       <GlobalStyle />
-      <ErrorBoundary fallbackRender={({ error }) => <div>{error}</div>}>
+      <RootStoreContext.Provider value={rootStore}>
         <MainPage />
-      </ErrorBoundary>
+      </RootStoreContext.Provider>
     </>
   );
 };
