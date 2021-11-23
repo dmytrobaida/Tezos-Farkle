@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const PageContainer = styled.div`
+  position: relative;
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -12,10 +13,20 @@ export const Container = styled.div`
 `;
 
 export const InfoLine = styled.div`
-  margin-bottom: 10px;
   cursor: pointer;
-  
+
   :hover {
     color: red;
   }
 `;
+
+export const ConnectWalletMenuContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
+export const DicesAnchor = styled.div``;

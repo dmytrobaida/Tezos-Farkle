@@ -9922,6 +9922,11 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+roll-a-die@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/roll-a-die/-/roll-a-die-2.0.1.tgz#2084d6df3e5f11c86b54017c40fa4d1c7edb34f3"
+  integrity sha512-2SbOfBoB12rgA0DG6HR5aaN1QG4FAJBDeYNwcqnkHkxDRrEUlgqB0uIhYsrf6+JITrxMwagMfd5asPHismxqaA==
+
 rollup-plugin-babel@^4.3.3:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/rollup-plugin-babel/-/rollup-plugin-babel-4.4.0.tgz#d15bd259466a9d1accbdb2fe2fff17c52d030acb"

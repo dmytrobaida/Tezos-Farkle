@@ -3,13 +3,17 @@ import { TempleWallet } from "@temple-wallet/dapp";
 
 export class TezosStore {
   address = "";
-  balance = 0;
+  balance = "";
+  connected = false;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
   async connect() {
+    if (this.connected) {
+      return;
+    }
     const available = await TempleWallet.isAvailable();
     if (!available) {
       throw new Error("Temple Wallet not installed");
@@ -23,7 +27,8 @@ export class TezosStore {
 
     runInAction(() => {
       this.address = address;
-      this.balance = balance.toNumber();
+      this.balance = balance.toString();
+      this.connected = wallet.connected;
     });
   }
 }
