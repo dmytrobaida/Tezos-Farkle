@@ -16,7 +16,7 @@ export class TezosStore {
     }
     const available = await TempleWallet.isAvailable();
     if (!available) {
-      throw new Error("Temple Wallet not installed");
+      alert("Temple Wallet not installed");
     }
     const wallet = new TempleWallet("Farkle");
     await wallet.connect("granadanet");
