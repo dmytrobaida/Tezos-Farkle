@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { Dice } from "./dice";
 
 const onScenePreload = (scene: Phaser.Scene) => {
-  scene.load.spritesheet("dice", "/images/dice.png", {
+  scene.load.spritesheet("dice", "./images/dice.png", {
     frameWidth: 100,
     frameHeight: 100,
   });
