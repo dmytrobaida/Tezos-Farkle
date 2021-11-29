@@ -12,7 +12,7 @@ import {
 } from "./styled";
 
 export default observer(() => {
-  const { tezosStore } = useAppStores();
+  const { tezosStore, gameStore } = useAppStores();
 
   return (
     <PageContainer>
@@ -36,6 +36,7 @@ export default observer(() => {
             position: "absolute",
             bottom: "10px",
           }}
+          onClick={() => gameStore.throwDices()}
         >
           Roll a dice
         </BaseButton>

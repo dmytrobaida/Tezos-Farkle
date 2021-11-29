@@ -1,31 +1,29 @@
 import Phaser from "phaser";
+import { Dice } from "./dice";
 
 const onScenePreload = (scene: Phaser.Scene) => {
-  scene.load.setBaseURL("https://labs.phaser.io");
-  scene.load.image("logo", "assets/sprites/phaser3-logo.png");
-  scene.load.image("red", "assets/particles/red.png");
+  scene.load.spritesheet("dice", "/images/dice.png", {
+    frameWidth: 100,
+    frameHeight: 100,
+  });
 };
 
 const onSceneCreate = (scene: Phaser.Scene) => {
-  const particles = scene.add.particles("red");
-
-  const emitter = particles.createEmitter({
-    speed: 100,
-    scale: { start: 1, end: 0 },
-    blendMode: "ADD",
-  });
-
-  const logo = scene.physics.add.image(400, 100, "logo");
-
-  logo.setVelocity(100, 200);
-  logo.setBounce(1, 1);
-  logo.setCollideWorldBounds(true);
-
-  emitter.startFollow(logo);
+  return [
+    new Dice(scene, 400, 100),
+    new Dice(scene, 500, 100),
+    new Dice(scene, 600, 100),
+    new Dice(scene, 700, 100),
+    new Dice(scene, 800, 100),
+  ];
 };
 
 export class FarkleGame {
+  dices: Dice[] = [];
+
   start(gameWindowId: string) {
+    const that = this;
+
     new Phaser.Game({
       type: Phaser.AUTO,
       parent: gameWindowId,
@@ -34,7 +32,7 @@ export class FarkleGame {
       physics: {
         default: "arcade",
         arcade: {
-          gravity: { y: 900 },
+          gravity: { y: 0 },
         },
       },
       scene: {
@@ -42,9 +40,14 @@ export class FarkleGame {
           onScenePreload(this);
         },
         create: function () {
-          onSceneCreate(this);
+          const dices = onSceneCreate(this);
+          that.dices.push(...dices)
         },
       },
     });
+  }
+
+  throwDices(values: number[]) {
+    this.dices.forEach((dice, i) => dice.throwDice(values[i]));
   }
 }

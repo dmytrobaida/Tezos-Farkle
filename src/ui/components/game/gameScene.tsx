@@ -1,12 +1,15 @@
-import { FarkleGame } from "game";
+import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
+import { useAppStores } from "store";
 
 const gameWindowId = "gameWindow";
 
-export const GameScene = () => {
+export const GameScene = observer(() => {
+  const { gameStore } = useAppStores();
+
   useEffect(() => {
-    new FarkleGame().start(gameWindowId);
-  }, []);
+    gameStore.startGame(gameWindowId);
+  }, [gameStore]);
   return (
     <div
       id={gameWindowId}
@@ -16,4 +19,4 @@ export const GameScene = () => {
       }}
     />
   );
-};
+});
