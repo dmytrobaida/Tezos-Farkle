@@ -29,6 +29,8 @@ Farkle is played by two or more players, with each player in succession having a
 | Three 5s         | 500   |
 | Three 6s         | 600   |
 
-### Development status [![Build and Deploy](https://github.com/dmytrobaida/Tezos-Farkle/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/dmytrobaida/Tezos-Farkle/actions/workflows/main.yml)
+### Development status
 
 Development currently in progress
+
+[![Build and Deploy](https://github.com/dmytrobaida/Tezos-Farkle/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/dmytrobaida/Tezos-Farkle/actions/workflows/main.yml)
