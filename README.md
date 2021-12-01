@@ -31,6 +31,6 @@ Farkle is played by two or more players, with each player in succession having a
 
 ### Development status
 
-Development currently in progress
-
 [![Build and Deploy](https://github.com/dmytrobaida/Tezos-Farkle/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/dmytrobaida/Tezos-Farkle/actions/workflows/main.yml)
+
+Development currently in progress
