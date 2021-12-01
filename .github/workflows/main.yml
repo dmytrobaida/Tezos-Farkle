@@ -9,8 +9,8 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_TEZOS_RPC_URL: unset
-      REACT_APP_CONTRACT_ADDRESS: unset
+      REACT_APP_TEZOS_RPC_URL: ""
+      REACT_APP_CONTRACT_ADDRESS: ""
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2.3.1
