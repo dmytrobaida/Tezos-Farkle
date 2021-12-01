@@ -1,6 +1,7 @@
 # Tezos Farkle Game
 
-Simple dice game built on Tezos network
+Simple dice game based on Farkle rules. This project inspired by Kingdome Come Zonk minigame. 
+Main purpose is to recreate game rules using Tezos network as a base for storing game state and logic and connect players between each other.
 
 ## Game rules
 
