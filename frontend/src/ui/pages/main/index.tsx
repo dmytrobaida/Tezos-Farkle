@@ -28,6 +28,17 @@ export default observer(() => {
         >
           {tezosStore.connected ? "Connected" : "Connect"}
         </BaseButton>
+        {tezosStore.connected && (
+          <BaseButton
+            style={{
+              position: "absolute",
+              left: "0",
+            }}
+            onClick={tezosStore.callContract}
+          >
+            Call contract
+          </BaseButton>
+        )}
       </ConnectWalletMenuContainer>
       <GameFrame>
         <GameScene />
