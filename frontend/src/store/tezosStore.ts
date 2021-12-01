@@ -48,7 +48,7 @@ export class TezosStore {
     if (contractAddress != null) {
       const contract = await this.tezosToolkit.wallet.at(contractAddress);
       const operation = await contract.methods.increment(5).send();
-      const result = await operation.confirmation();
+      await operation.confirmation();
     }
   }
 }
