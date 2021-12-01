@@ -45,7 +45,7 @@ export class TezosStore {
   }
 
   async callContract() {
-    if (contractAddress != null && contractAddress != "unset") {
+    if (contractAddress != null && contractAddress !== "unset") {
       const contract = await this.tezosToolkit.wallet.at(contractAddress);
       const operation = await contract.methods.increment(5).send();
       await operation.confirmation();
