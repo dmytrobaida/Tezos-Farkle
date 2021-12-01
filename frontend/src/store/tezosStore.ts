@@ -24,7 +24,7 @@ export class TezosStore {
       alert("Temple Wallet not installed");
     }
     const wallet = new TempleWallet("Farkle");
-    if (tezosRpcUrl != null) {
+    if (tezosRpcUrl != null && tezosRpcUrl !== "unset") {
       await wallet.connect({
         name: "Local",
         rpc: tezosRpcUrl,
@@ -45,7 +45,7 @@ export class TezosStore {
   }
 
   async callContract() {
-    if (contractAddress != null) {
+    if (contractAddress != null && contractAddress != "unset") {
       const contract = await this.tezosToolkit.wallet.at(contractAddress);
       const operation = await contract.methods.increment(5).send();
       await operation.confirmation();
