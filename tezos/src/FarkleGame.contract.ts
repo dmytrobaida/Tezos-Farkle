@@ -287,7 +287,7 @@ export class FarkleGame {
     @EntryPoint
     startGame() {
         // Calculate seed for random
-        const randomBytes: TBytes = Sp.sha256(Sp.pack(Sp.createContractOperation(DummyContract)));
+        const randomBytes: TBytes = Sp.sha256(Sp.pack(Sp.createContractOperation(DummyContract).address as TString));
         let x: TNat = 0;
         let totalValue: TNat = 0;
         while (x < randomBytes.size()) {
