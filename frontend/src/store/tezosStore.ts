@@ -47,8 +47,12 @@ export class TezosStore {
   async callContract() {
     if (contractAddress != null && contractAddress !== "") {
       const contract = await this.tezosToolkit.wallet.at(contractAddress);
-      const operation = await contract.methods.increment(5).send();
-      await operation.confirmation();
+      const st = await contract.storage();
+      debugger
+      const operation = await contract.methods.createNewGame().send();
+      debugger
+      const result = await operation.confirmation();
+      debugger
     }
   }
 }
