@@ -10,11 +10,12 @@ const onScenePreload = (scene: Phaser.Scene) => {
 
 const onSceneCreate = (scene: Phaser.Scene) => {
   return [
-    new Dice(scene, 400, 100),
-    new Dice(scene, 500, 100),
-    new Dice(scene, 600, 100),
-    new Dice(scene, 700, 100),
-    new Dice(scene, 800, 100),
+    new Dice(scene, 350, 100),
+    new Dice(scene, 450, 100),
+    new Dice(scene, 550, 100),
+    new Dice(scene, 650, 100),
+    new Dice(scene, 750, 100),
+    new Dice(scene, 850, 100),
   ];
 };
 

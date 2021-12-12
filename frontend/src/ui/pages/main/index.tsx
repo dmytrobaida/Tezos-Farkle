@@ -1,28 +1,73 @@
 import { observer } from "mobx-react-lite";
+import { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { BaseButton } from "ui/components";
 import { useAppStores } from "store";
 
-import { PageContainer, InfoLine, ConnectWalletMenuContainer } from "./styled";
+import {
+  PageContainer,
+  InfoLine,
+  HeaderContainer,
+  ContentContainer,
+  AllGamesTable,
+} from "./styled";
 
 export default observer(() => {
-  const { tezosStore } = useAppStores();
+  const { tezosStore, gameStore } = useAppStores();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    gameStore.loadGames();
+  }, []);
+
+  const joinGameHandler = useCallback(async (gameAddress: string) => {
+    await gameStore.joinGame(gameAddress);
+    navigate("/game", {
+      state: {
+        gameAddress: gameAddress,
+      },
+    });
+  }, []);
+
+  const createNewGameHandler = useCallback(async () => {
+    await gameStore.createNewGame();
+    await gameStore.loadGames();
+  }, []);
 
   return (
     <PageContainer>
-      <ConnectWalletMenuContainer>
+      <HeaderContainer>
         <InfoLine>Address: {tezosStore.address}</InfoLine>
         <InfoLine>Balance: {tezosStore.balance}</InfoLine>
-        <BaseButton
-          style={{
-            position: "absolute",
-            left: "0",
-          }}
-          onClick={tezosStore.api.createNewGame}
-        >
-          Call contract
-        </BaseButton>
-      </ConnectWalletMenuContainer>
+      </HeaderContainer>
+      <ContentContainer>
+        <AllGamesTable>
+          <thead>
+            <tr>
+              <th>Contract address</th>
+              <th>Creator address</th>
+              <th>Status</th>
+              <th>
+                <button onClick={createNewGameHandler}>Create new</button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {gameStore.allGames.map((game, i) => (
+              <tr key={i}>
+                <td>{game.address}</td>
+                <td>{game.creator}</td>
+                <td>{game.state.toNumber()}</td>
+                <td>
+                  <button onClick={() => joinGameHandler(game.address)}>
+                    Join game
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </AllGamesTable>
+      </ContentContainer>
     </PageContainer>
   );
 });

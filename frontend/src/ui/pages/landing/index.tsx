@@ -14,7 +14,7 @@ export default observer(() => {
 
   const connectHandler = useCallback(async () => {
     await tezosStore.connect();
-    const from = location.state?.from?.pathname || "/";
+    const from = location.state?.from?.pathname || "/main";
     navigate(from, { replace: true });
   }, [location, navigate]);
 

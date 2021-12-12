@@ -1,6 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { TempleWallet } from "@temple-wallet/dapp";
-import { TezosToolkit } from "@taquito/taquito";
 import { GameApi } from "utils/api";
 
 const tezosRpcUrl = process.env.REACT_APP_TEZOS_RPC_URL;
@@ -32,7 +31,7 @@ export class TezosStore {
     } else {
       await wallet.connect("granadanet");
     }
-    
+
     const tezosToolkit = wallet.toTezos();
     const address = await tezosToolkit.wallet.pkh();
     const balance = await tezosToolkit.tz.getBalance(address);

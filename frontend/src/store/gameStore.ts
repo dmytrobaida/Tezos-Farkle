@@ -1,20 +1,40 @@
+import { makeAutoObservable, runInAction } from "mobx";
+
 import { FarkleGame } from "game";
+import { GameApi } from "utils/api";
 
+type GetApiFn = () => GameApi;
 export class GameStore {
-    game: FarkleGame = new FarkleGame();
+  game: FarkleGame = new FarkleGame();
+  allGames: any[] = [];
 
-    startGame(gameWindowId: string) {
-        this.game.start(gameWindowId);
-    }
+  constructor(private getApi: GetApiFn) {
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
 
-    throwDices() {
-        const numbers = [
-            Phaser.Math.Between(1, 6),
-            Phaser.Math.Between(1, 6),
-            Phaser.Math.Between(1, 6),
-            Phaser.Math.Between(1, 6),
-            Phaser.Math.Between(1, 6),
-        ];
-        this.game.throwDices(numbers);
-    }
+  startGame(gameWindowId: string) {
+    this.game.start(gameWindowId);
+  }
+
+  async throwDices(gameAddress: string) {
+    const dices = await this.getApi()?.throwDices(gameAddress);
+    this.game.throwDices(dices);
+  }
+
+  async loadGames() {
+    const games = await this.getApi()?.loadAllGames();
+    runInAction(() => {
+      if (games != null) {
+        this.allGames = games;
+      }
+    });
+  }
+
+  async joinGame(gameAddress: string) {
+    await this.getApi()?.startNewGame(gameAddress);
+  }
+
+  async createNewGame() {
+    await this.getApi()?.createNewGame();
+  }
 }

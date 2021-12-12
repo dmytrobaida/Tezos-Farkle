@@ -1,11 +1,14 @@
 import { useContext, createContext } from "react";
-import { GameStore } from "./gameStore";
 
+import { GameStore } from "./gameStore";
 import { TezosStore } from "./tezosStore";
 
+const tezosStore: TezosStore = new TezosStore();
+const gameStore: GameStore = new GameStore(tezosStore.getApi);
+
 class RootStore {
-  tezosStore: TezosStore = new TezosStore();
-  gameStore: GameStore = new GameStore();
+  tezosStore = tezosStore;
+  gameStore = gameStore;
 }
 
 export const RootStoreContext = createContext<RootStore>(new RootStore());

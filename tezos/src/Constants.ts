@@ -1,7 +1,8 @@
 export const GameState = {
     Created: 0 as TNat,
-    Started: 1 as TNat,
-    Finished: 2 as TNat,
+    PlayerJoined: 1 as TNat,
+    Started: 2 as TNat,
+    Finished: 3 as TNat,
 };
 
 export const BytesToNatMap: TMap<TBytes, TNat> = [
