@@ -2,17 +2,11 @@ import { observer } from "mobx-react-lite";
 
 import { BaseButton } from "ui/components";
 import { useAppStores } from "store";
-import { GameScene } from "ui/components/game/gameScene";
 
-import {
-  PageContainer,
-  InfoLine,
-  ConnectWalletMenuContainer,
-  GameFrame,
-} from "./styled";
+import { PageContainer, InfoLine, ConnectWalletMenuContainer } from "./styled";
 
 export default observer(() => {
-  const { tezosStore, gameStore } = useAppStores();
+  const { tezosStore } = useAppStores();
 
   return (
     <PageContainer>
@@ -22,36 +16,13 @@ export default observer(() => {
         <BaseButton
           style={{
             position: "absolute",
-            right: "0",
+            left: "0",
           }}
-          onClick={tezosStore.connect}
+          onClick={tezosStore.api.createNewGame}
         >
-          {tezosStore.connected ? "Connected" : "Connect"}
+          Call contract
         </BaseButton>
-        {tezosStore.connected && (
-          <BaseButton
-            style={{
-              position: "absolute",
-              left: "0",
-            }}
-            onClick={tezosStore.api.createNewGame}
-          >
-            Call contract
-          </BaseButton>
-        )}
       </ConnectWalletMenuContainer>
-      <GameFrame>
-        <GameScene />
-        <BaseButton
-          style={{
-            position: "absolute",
-            bottom: "10px",
-          }}
-          onClick={() => gameStore.throwDices()}
-        >
-          Roll a dice
-        </BaseButton>
-      </GameFrame>
     </PageContainer>
   );
 });

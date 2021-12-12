@@ -1,8 +1,9 @@
 import { createGlobalStyle } from "styled-components";
+import { Route, Routes } from "react-router-dom";
 
 import RootStore, { RootStoreContext } from "store";
 
-import { MainPage } from "./pages";
+import { AppRoutes } from "./routes";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -24,7 +25,11 @@ export default () => {
     <>
       <GlobalStyle />
       <RootStoreContext.Provider value={rootStore}>
-        <MainPage />
+        <Routes>
+          {AppRoutes.map((routeProps, i) => (
+            <Route key={i} {...routeProps} />
+          ))}
+        </Routes>
       </RootStoreContext.Provider>
     </>
   );

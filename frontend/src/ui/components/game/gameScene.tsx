@@ -1,15 +1,13 @@
-import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
-import { useAppStores } from "store";
+import React, { useEffect } from "react";
 
 const gameWindowId = "gameWindow";
 
-export const GameScene = observer(() => {
-  const { gameStore } = useAppStores();
-
+export const GameScene: React.FC<{
+  onStart(gameWindowId: string): void;
+}> = ({ onStart }) => {
   useEffect(() => {
-    gameStore.startGame(gameWindowId);
-  }, [gameStore]);
+    onStart(gameWindowId);
+  }, []);
   return (
     <div
       id={gameWindowId}
@@ -19,4 +17,4 @@ export const GameScene = observer(() => {
       }}
     />
   );
-});
+};
