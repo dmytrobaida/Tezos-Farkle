@@ -34,7 +34,7 @@ export default observer(() => {
               position: "absolute",
               left: "0",
             }}
-            onClick={tezosStore.callContract}
+            onClick={tezosStore.api.createNewGame}
           >
             Call contract
           </BaseButton>

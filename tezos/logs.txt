@@ -1,0 +1,14 @@
+yarn run v1.22.4
+$ node ./scripts/compile.js && node ./scripts/originate.js --code build/compilation/FarkleGame.contract/farkleGameFactory/step_000_cont_2_contract.tz --storage build/compilation/FarkleGame.contract/farkleGameFactory/step_000_cont_2_storage.tz --rpc http://localhost:20000 --private-key edsk3RFfvaFaxbHx8BMtEW1rKQcPtDML3LXjNqMNLCzC3wLC1bWbAt
+
+[INFO] - Using RPC http://localhost:20000...
+
+
+Done in 4.02s.
+yarn run v1.22.4
+$ node ./scripts/compile.js && node ./scripts/originate.js --code build/compilation/FarkleGame.contract/farkleGameFactory/step_000_cont_2_contract.tz --storage build/compilation/FarkleGame.contract/farkleGameFactory/step_000_cont_2_storage.tz --rpc http://localhost:20000 --private-key edsk3RFfvaFaxbHx8BMtEW1rKQcPtDML3LXjNqMNLCzC3wLC1bWbAt
+
+[INFO] - Using RPC http://localhost:20000...
+
+
+Done in 4.22s.

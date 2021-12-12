@@ -1,15 +1,15 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { TempleWallet } from "@temple-wallet/dapp";
 import { TezosToolkit } from "@taquito/taquito";
+import { GameApi } from "utils/api";
 
 const tezosRpcUrl = process.env.REACT_APP_TEZOS_RPC_URL;
-const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
 
 export class TezosStore {
   address = "";
   balance = "";
   connected = false;
-  tezosToolkit!: TezosToolkit;
+  api!: GameApi;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -32,27 +32,18 @@ export class TezosStore {
     } else {
       await wallet.connect("granadanet");
     }
-    this.tezosToolkit = wallet.toTezos();
-
-    const address = await this.tezosToolkit.wallet.pkh();
-    const balance = await this.tezosToolkit.tz.getBalance(address);
+    
+    const tezosToolkit = wallet.toTezos();
+    const address = await tezosToolkit.wallet.pkh();
+    const balance = await tezosToolkit.tz.getBalance(address);
 
     runInAction(() => {
       this.address = address;
       this.balance = balance.toString();
       this.connected = wallet.connected;
+      this.api = new GameApi(tezosToolkit);
     });
   }
 
-  async callContract() {
-    if (contractAddress != null && contractAddress !== "") {
-      const contract = await this.tezosToolkit.wallet.at(contractAddress);
-      const st = await contract.storage();
-      debugger
-      const operation = await contract.methods.createNewGame().send();
-      debugger
-      const result = await operation.confirmation();
-      debugger
-    }
-  }
+  getApi = () => this.api;
 }
