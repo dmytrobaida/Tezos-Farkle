@@ -1,17 +1,26 @@
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableHeadCell,
+  TableDataCell,
+  Window,
+  WindowContent,
+  WindowHeader,
+  AppBar,
+  Toolbar,
+  Button,
+  Bar,
+} from "react95";
 
 import { useAppStores } from "store";
 import { GameState } from "utils/types";
 
-import {
-  PageContainer,
-  InfoLine,
-  HeaderContainer,
-  ContentContainer,
-  AllGamesTable,
-} from "./styled";
+import { PageContainer, ContentContainer } from "./styled";
 
 export default observer(() => {
   const { tezosStore, gameStore } = useAppStores();
@@ -40,37 +49,51 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <HeaderContainer>
-        <InfoLine>Address: {tezosStore.address}</InfoLine>
-        <InfoLine>Balance: {tezosStore.balance}</InfoLine>
-      </HeaderContainer>
+      <AppBar>
+        <Toolbar>
+          <Button variant="menu">Address: {tezosStore.address}</Button>
+          <Bar size={35} />
+          <Button variant="menu">Balance: {tezosStore.balance}</Button>
+        </Toolbar>
+      </AppBar>
       <ContentContainer>
-        <AllGamesTable>
-          <thead>
-            <tr>
-              <th>Contract address</th>
-              <th>Creator address</th>
-              <th>Status</th>
-              <th>
-                <button onClick={createNewGameHandler}>Create new</button>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {gameStore.allGames.map((game, i) => (
-              <tr key={i}>
-                <td>{game.address}</td>
-                <td>{game.creator}</td>
-                <td>{GameState[game.state.toNumber()]}</td>
-                <td>
-                  <button onClick={() => joinGameHandler(game.address)}>
-                    Join game
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </AllGamesTable>
+        <Window>
+          <WindowHeader>All games</WindowHeader>
+          <WindowContent>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeadCell>Contract address</TableHeadCell>
+                  <TableHeadCell>Creator address</TableHeadCell>
+                  <TableHeadCell>Status</TableHeadCell>
+                  <TableHeadCell
+                    style={{ cursor: "pointer" }}
+                    onClick={createNewGameHandler}
+                  >
+                    Create new
+                  </TableHeadCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {gameStore.allGames.map((game, i) => (
+                  <TableRow key={i}>
+                    <TableDataCell>{game.address}</TableDataCell>
+                    <TableDataCell>{game.creator}</TableDataCell>
+                    <TableDataCell>
+                      {GameState[game.state.toNumber()]}
+                    </TableDataCell>
+                    <TableHeadCell
+                      style={{ cursor: "pointer" }}
+                      onClick={() => joinGameHandler(game.address)}
+                    >
+                      Join game
+                    </TableHeadCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </WindowContent>
+        </Window>
       </ContentContainer>
     </PageContainer>
   );

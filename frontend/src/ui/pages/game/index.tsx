@@ -1,6 +1,16 @@
 import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import {
+  Window,
+  WindowContent,
+  WindowHeader,
+  List,
+  ListItem,
+  Button,
+  Toolbar,
+  Bar,
+} from "react95";
 
 import { useAppStores } from "store";
 import { GameScene } from "ui/components";
@@ -11,11 +21,8 @@ import {
   GameFrame,
   Player1ThrowsContainer,
   Player2ThrowsContainer,
-  InfoLine,
   ResultLine,
-  InfoLineHeader,
   ControlsContainer,
-  ControlButton,
 } from "./styled";
 
 const numberToImageMap: { [key: number]: string } = {
@@ -69,49 +76,86 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <GameFrame>
-        <GameScene onStart={gameStore.startGame.bind(gameStore)} />
-      </GameFrame>
+      <Window>
+        <WindowHeader>Farkle!</WindowHeader>
+        <WindowContent>
+          <GameFrame>
+            <GameScene onStart={gameStore.startGame.bind(gameStore)} />
+          </GameFrame>
+        </WindowContent>
+        <Toolbar style={{ "justify-content": "center" }}>
+          <Button onClick={() => gameStore.throwDices(gameAddress)}>
+            Roll dices
+          </Button>
+          <Bar size={35} />
+          <Button onClick={() => gameStore.endMove(gameAddress)} disabled>
+            End move
+          </Button>
+        </Toolbar>
+      </Window>
       <Player1ThrowsContainer>
-        <InfoLineHeader>You</InfoLineHeader>
-        <InfoLine>Total: {gamersInfos?.me.points.toNumber()} points</InfoLine>
-        <InfoLine>
-          Current: {gameStore.currentGame?.movePoints.toNumber()} points
-        </InfoLine>
-        <ResultLine>
-          {gameStore.currentGame?.currentPlayerLeavedDices.map((dice, i) => (
-            <i
-              key={i}
-              className={"las " + numberToImageMap[dice.toNumber()]}
-            ></i>
-          ))}
-        </ResultLine>
+        <WindowHeader>You</WindowHeader>
+        <WindowContent style={{ padding: 0 }}>
+          <List>
+            <ListItem>
+              Total: {gamersInfos?.me.points.toNumber()} points
+            </ListItem>
+            <ListItem>
+              Current: {gameStore.currentGame?.movePoints.toNumber()} points
+            </ListItem>
+            <ListItem>
+              Current: {gameStore.currentGame?.movePoints.toNumber()} points
+            </ListItem>
+            {(gameStore.currentGame?.currentPlayerLeavedDices?.length || 0) >
+              0 && (
+              <ListItem>
+                <ResultLine>
+                  {gameStore.currentGame?.currentPlayerLeavedDices.map(
+                    (dice, i) => (
+                      <i
+                        key={i}
+                        className={"las " + numberToImageMap[dice.toNumber()]}
+                      ></i>
+                    )
+                  )}
+                </ResultLine>
+              </ListItem>
+            )}
+          </List>
+        </WindowContent>
       </Player1ThrowsContainer>
       <Player2ThrowsContainer>
-        <InfoLineHeader>Guest</InfoLineHeader>
-        <InfoLine>
-          Total: {gamersInfos?.other.points.toNumber()} points
-        </InfoLine>
-        <InfoLine>
-          Current: {gameStore.currentGame?.movePoints.toNumber()} points
-        </InfoLine>
-        <ResultLine>
-          {gameStore.currentGame?.currentPlayerLeavedDices.map((dice, i) => (
-            <i
-              key={i}
-              className={"las " + numberToImageMap[dice.toNumber()]}
-            ></i>
-          ))}
-        </ResultLine>
+        <WindowHeader>Other</WindowHeader>
+        <WindowContent style={{ padding: 0 }}>
+          <List>
+            <ListItem>
+              Total: {gamersInfos?.other.points.toNumber()} points
+            </ListItem>
+            <ListItem>
+              Current: {gameStore.currentGame?.movePoints.toNumber()} points
+            </ListItem>
+            <ListItem>
+              Current: {gameStore.currentGame?.movePoints.toNumber()} points
+            </ListItem>
+            {(gameStore.currentGame?.currentPlayerLeavedDices?.length || 0) >
+              0 && (
+              <ListItem>
+                <ResultLine>
+                  {gameStore.currentGame?.currentPlayerLeavedDices.map(
+                    (dice, i) => (
+                      <i
+                        key={i}
+                        className={"las " + numberToImageMap[dice.toNumber()]}
+                      ></i>
+                    )
+                  )}
+                </ResultLine>
+              </ListItem>
+            )}
+          </List>
+        </WindowContent>
       </Player2ThrowsContainer>
-      <ControlsContainer>
-        <ControlButton onClick={() => gameStore.throwDices(gameAddress)}>
-          Roll dices
-        </ControlButton>
-        <ControlButton onClick={() => gameStore.endMove(gameAddress)}>
-          End move
-        </ControlButton>
-      </ControlsContainer>
+      <ControlsContainer></ControlsContainer>
     </PageContainer>
   );
 });
