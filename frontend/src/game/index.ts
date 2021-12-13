@@ -9,13 +9,14 @@ const onScenePreload = (scene: Phaser.Scene) => {
 };
 
 const onSceneCreate = (scene: Phaser.Scene) => {
+  const { width, height } = scene.sys.canvas;
   return [
-    new Dice(scene, 350, 100),
-    new Dice(scene, 450, 100),
-    new Dice(scene, 550, 100),
-    new Dice(scene, 650, 100),
-    new Dice(scene, 750, 100),
-    new Dice(scene, 850, 100),
+    new Dice(scene, width / 2 - 250, height / 2),
+    new Dice(scene, 0, 0),
+    new Dice(scene, 0, 0),
+    new Dice(scene, 0, 0),
+    new Dice(scene, 0, 0),
+    new Dice(scene, 0, 0),
   ];
 };
 
@@ -42,7 +43,16 @@ export class FarkleGame {
         },
         create: function () {
           const dices = onSceneCreate(this);
-          that.dices.push(...dices)
+          dices.forEach((dice, i) => {
+            that.dices.push(dice);
+            if (i != 0) {
+              Phaser.Display.Align.In.RightCenter(
+                dice.sprite,
+                dices[i - 1].sprite,
+                100
+              );
+            }
+          });
         },
       },
     });

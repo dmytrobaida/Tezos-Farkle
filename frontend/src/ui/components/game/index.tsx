@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { GameContainer } from "./styled";
 
 const gameWindowId = "gameWindow";
 
@@ -8,13 +9,5 @@ export const GameScene: React.FC<{
   useEffect(() => {
     onStart(gameWindowId);
   }, []);
-  return (
-    <div
-      id={gameWindowId}
-      style={{
-        width: "100%",
-        height: "100%",
-      }}
-    />
-  );
+  return <GameContainer id={gameWindowId} />;
 };
