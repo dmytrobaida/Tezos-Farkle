@@ -154,7 +154,7 @@ export class FarkleGame {
     @EntryPoint
     throwDices(leaveDiceIndexes: TOption<TSet<TNat>>) {
         // Sp.verify(this.storage.state == Constants.GameState.Started, 'Game is not started yet!');
-        if (this.storage.moveStage != 0 && leaveDiceIndexes.isSome() && leaveDiceIndexes.openSome().size() > 0) {
+        if (this.storage.moveStage == 0 && leaveDiceIndexes.isSome() && leaveDiceIndexes.openSome().size() > 0) {
             Sp.failWith('You cant leave dices at current stage!');
         }
         if (this.storage.currentPlayer == 1) {
