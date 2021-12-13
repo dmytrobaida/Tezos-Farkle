@@ -1,6 +1,6 @@
 import { TezosToolkit } from "@taquito/taquito";
 
-const test: string | undefined = "KT1PZVNRN58hfx9WfY7gH697PsvHsV6YaGY9";
+const test: string | undefined = "KT1AF2eHTtZhsWDAyVnZxfTAmMtDxWnhD7bE";
 const factoryContractAddress = test || process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
 
 export class GameApi {
