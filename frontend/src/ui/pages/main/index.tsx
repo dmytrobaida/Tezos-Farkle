@@ -19,21 +19,24 @@ export default observer(() => {
 
   useEffect(() => {
     gameStore.loadGames();
-  }, []);
+  }, [gameStore]);
 
-  const joinGameHandler = useCallback(async (gameAddress: string) => {
-    await gameStore.joinGame(gameAddress);
-    navigate("/game", {
-      state: {
-        gameAddress: gameAddress,
-      },
-    });
-  }, []);
+  const joinGameHandler = useCallback(
+    async (gameAddress: string) => {
+      await gameStore.joinGame(gameAddress);
+      navigate("/game", {
+        state: {
+          gameAddress: gameAddress,
+        },
+      });
+    },
+    [gameStore, navigate]
+  );
 
   const createNewGameHandler = useCallback(async () => {
     await gameStore.createNewGame();
     await gameStore.loadGames();
-  }, []);
+  }, [gameStore]);
 
   return (
     <PageContainer>

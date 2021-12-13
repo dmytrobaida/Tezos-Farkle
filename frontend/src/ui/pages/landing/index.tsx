@@ -16,7 +16,7 @@ export default observer(() => {
     await tezosStore.connect();
     const from = location.state?.from?.pathname || "/main";
     navigate(from, { replace: true });
-  }, [location, navigate]);
+  }, [tezosStore, location, navigate]);
 
   return (
     <PageContainer>

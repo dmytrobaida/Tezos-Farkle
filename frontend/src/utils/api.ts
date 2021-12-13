@@ -49,9 +49,11 @@ export class GameApi {
     return farkleGameState;
   }
 
-  async throwDices(gameAddress: string) {
+  async throwDices(gameAddress: string, leaveDiceIndexes: number[] = []) {
     const contract = await this.tezosToolkit.wallet.at(gameAddress);
-    const operation = await contract.methods.throwDices().send();
+    const operation = await contract.methods
+      .throwDices(leaveDiceIndexes)
+      .send();
     await operation.confirmation();
     const farkleGameState: FarkleGameState = await contract.storage();
     return farkleGameState;

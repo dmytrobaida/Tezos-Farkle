@@ -47,7 +47,7 @@ export class FarkleGame {
               const dices = onSceneCreate(this);
               dices.forEach((dice, i) => {
                 that.dices.push(dice);
-                if (i != 0) {
+                if (i !== 0) {
                   Phaser.Display.Align.In.RightCenter(
                     dice.sprite,
                     dices[i - 1].sprite,

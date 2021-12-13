@@ -60,7 +60,7 @@ export default observer(() => {
   const { gameAddress } = location.state || {};
   const gamersInfos = useMemo(
     () => sortGamersInfo(tezosStore.address, gameStore.currentGame),
-    []
+    [tezosStore, gameStore]
   );
 
   if (gameAddress == null) {
