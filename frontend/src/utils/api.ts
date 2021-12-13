@@ -1,7 +1,10 @@
 import { TezosToolkit } from "@taquito/taquito";
 
-const test: string | undefined = "KT1P13BLd149s7vHGiFhRoZSEopZCBZXaXq9";
-const factoryContractAddress = test || process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
+import { FarkleGameFactoryState, FarkleGameState } from "./types";
+
+const test: string | undefined = "KT19ARHPtcBsgBs55obUSE2FzMXZ7QcQNoBz";
+const factoryContractAddress =
+  test || process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
 
 export class GameApi {
   constructor(private tezosToolkit: TezosToolkit) {}
@@ -13,7 +16,7 @@ export class GameApi {
       );
       const operation = await contract.methods.createNewGame().send();
       await operation.confirmation();
-      const storage: any = await contract.storage();
+      const storage: FarkleGameFactoryState = await contract.storage();
       return storage.activeGames;
     }
   }
@@ -23,18 +26,18 @@ export class GameApi {
       const contract = await this.tezosToolkit.wallet.at(
         factoryContractAddress
       );
-      const storage: any = await contract.storage();
+      const storage: FarkleGameFactoryState = await contract.storage();
       const gamesWithDetails = await Promise.all(
-        (storage.activeGames as string[]).map(async (game) => {
-          const contract = await this.tezosToolkit.wallet.at(game);
-          const storage: any = await contract.storage();
+        (storage.activeGames as string[]).map(async (address) => {
+          const contract = await this.tezosToolkit.wallet.at(address);
+          const farkleGameState: FarkleGameState = await contract.storage();
           return {
-            address: game,
-            ...storage,
+            ...farkleGameState,
+            address: address,
           };
         })
       );
-      return gamesWithDetails as any[];
+      return gamesWithDetails;
     }
   }
 
@@ -42,14 +45,23 @@ export class GameApi {
     const contract = await this.tezosToolkit.wallet.at(gameAddress);
     const operation = await contract.methods.startGame().send();
     await operation.confirmation();
-    const st = await contract.storage();
+    const farkleGameState: FarkleGameState = await contract.storage();
+    return farkleGameState;
   }
 
   async throwDices(gameAddress: string) {
     const contract = await this.tezosToolkit.wallet.at(gameAddress);
     const operation = await contract.methods.throwDices().send();
     await operation.confirmation();
-    const st: any = await contract.storage();
-    return st.dices.map((dice: any) => dice.toNumber()) as number[];
+    const farkleGameState: FarkleGameState = await contract.storage();
+    return farkleGameState;
+  }
+
+  async endMove(gameAddress: string) {
+    const contract = await this.tezosToolkit.wallet.at(gameAddress);
+    const operation = await contract.methods.endMove().send();
+    await operation.confirmation();
+    const farkleGameState: FarkleGameState = await contract.storage();
+    return farkleGameState;
   }
 }

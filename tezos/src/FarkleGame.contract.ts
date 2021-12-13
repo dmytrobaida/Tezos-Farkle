@@ -226,6 +226,7 @@ export class FarkleGame {
             this.storage.player2Points = this.storage.player2Points + this.storage.movePoints;
         }
         this.storage.moveStage = 0;
+        this.storage.movePoints = 0;
         this.storage.currentPlayerDices = [];
         this.storage.currentPlayerLeavedDices = [];
     }

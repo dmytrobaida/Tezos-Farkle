@@ -3,6 +3,7 @@ import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAppStores } from "store";
+import { GameState } from "utils/types";
 
 import {
   PageContainer,
@@ -57,7 +58,7 @@ export default observer(() => {
               <tr key={i}>
                 <td>{game.address}</td>
                 <td>{game.creator}</td>
-                <td>{game.state.toNumber()}</td>
+                <td>{GameState[game.state.toNumber()]}</td>
                 <td>
                   <button onClick={() => joinGameHandler(game.address)}>
                     Join game

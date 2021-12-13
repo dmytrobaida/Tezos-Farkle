@@ -26,39 +26,49 @@ export class FarkleGame {
   start(gameWindowId: string) {
     const that = this;
 
-    new Phaser.Game({
-      type: Phaser.AUTO,
-      parent: gameWindowId,
-      width: "100",
-      height: "100",
-      physics: {
-        default: "arcade",
-        arcade: {
-          gravity: { y: 0 },
-        },
-      },
-      scene: {
-        preload: function () {
-          onScenePreload(this);
-        },
-        create: function () {
-          const dices = onSceneCreate(this);
-          dices.forEach((dice, i) => {
-            that.dices.push(dice);
-            if (i != 0) {
-              Phaser.Display.Align.In.RightCenter(
-                dice.sprite,
-                dices[i - 1].sprite,
-                100
-              );
-            }
-          });
-        },
-      },
-    });
+    return new Promise<void>(
+      (resolve) =>
+        new Phaser.Game({
+          type: Phaser.AUTO,
+          parent: gameWindowId,
+          width: "100",
+          height: "100",
+          physics: {
+            default: "arcade",
+            arcade: {
+              gravity: { y: 0 },
+            },
+          },
+          scene: {
+            preload: function () {
+              onScenePreload(this);
+            },
+            create: function () {
+              const dices = onSceneCreate(this);
+              dices.forEach((dice, i) => {
+                that.dices.push(dice);
+                if (i != 0) {
+                  Phaser.Display.Align.In.RightCenter(
+                    dice.sprite,
+                    dices[i - 1].sprite,
+                    100
+                  );
+                }
+              });
+              resolve();
+            },
+          },
+        })
+    );
   }
 
   throwDices(values: number[]) {
     this.dices.forEach((dice, i) => dice.throwDice(values[i]));
+  }
+
+  setDiceValues(values: number[]) {
+    for (let i = 0; i < values.length; i++) {
+      this.dices[i]?.sprite.setFrame(values[i] === 0 ? 0 : values[i] - 1);
+    }
   }
 }

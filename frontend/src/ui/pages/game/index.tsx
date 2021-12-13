@@ -1,8 +1,10 @@
 import { observer } from "mobx-react-lite";
+import { useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 import { useAppStores } from "store";
 import { GameScene } from "ui/components";
+import { FarkleGameState } from "utils/types";
 
 import {
   PageContainer,
@@ -25,12 +27,41 @@ const numberToImageMap: { [key: number]: string } = {
   6: "la-dice-six",
 };
 
-const dices = [1, 2, 3, 4, 5, 6];
+const sortGamersInfo = (
+  myAddress: string,
+  gameState: FarkleGameState | null
+) => {
+  if (gameState == null) {
+    return null;
+  }
+  if (myAddress === gameState.player1) {
+    return {
+      me: {
+        points: gameState.player1Points,
+      },
+      other: {
+        points: gameState.player2Points,
+      },
+    };
+  }
+  return {
+    me: {
+      points: gameState.player2Points,
+    },
+    other: {
+      points: gameState.player1Points,
+    },
+  };
+};
 
 export default observer(() => {
-  const { gameStore } = useAppStores();
+  const { gameStore, tezosStore } = useAppStores();
   const location = useLocation();
   const { gameAddress } = location.state || {};
+  const gamersInfos = useMemo(
+    () => sortGamersInfo(tezosStore.address, gameStore.currentGame),
+    []
+  );
 
   if (gameAddress == null) {
     return <Navigate to={"/main"} replace={true} />;
@@ -43,21 +74,33 @@ export default observer(() => {
       </GameFrame>
       <Player1ThrowsContainer>
         <InfoLineHeader>You</InfoLineHeader>
-        <InfoLine>Total: 0 points</InfoLine>
-        <InfoLine>Current: 0 points</InfoLine>
+        <InfoLine>Total: {gamersInfos?.me.points.toNumber()} points</InfoLine>
+        <InfoLine>
+          Current: {gameStore.currentGame?.movePoints.toNumber()} points
+        </InfoLine>
         <ResultLine>
-          {dices.map((dice, i) => (
-            <i key={i} className={"las " + numberToImageMap[dice]}></i>
+          {gameStore.currentGame?.currentPlayerLeavedDices.map((dice, i) => (
+            <i
+              key={i}
+              className={"las " + numberToImageMap[dice.toNumber()]}
+            ></i>
           ))}
         </ResultLine>
       </Player1ThrowsContainer>
       <Player2ThrowsContainer>
         <InfoLineHeader>Guest</InfoLineHeader>
-        <InfoLine>Total: 0 points</InfoLine>
-        <InfoLine>Current: 0 points</InfoLine>
+        <InfoLine>
+          Total: {gamersInfos?.other.points.toNumber()} points
+        </InfoLine>
+        <InfoLine>
+          Current: {gameStore.currentGame?.movePoints.toNumber()} points
+        </InfoLine>
         <ResultLine>
-          {dices.map((dice, i) => (
-            <i key={i} className={"las " + numberToImageMap[dice]}></i>
+          {gameStore.currentGame?.currentPlayerLeavedDices.map((dice, i) => (
+            <i
+              key={i}
+              className={"las " + numberToImageMap[dice.toNumber()]}
+            ></i>
           ))}
         </ResultLine>
       </Player2ThrowsContainer>
@@ -65,7 +108,7 @@ export default observer(() => {
         <ControlButton onClick={() => gameStore.throwDices(gameAddress)}>
           Roll dices
         </ControlButton>
-        <ControlButton onClick={() => gameStore.throwDices(gameAddress)}>
+        <ControlButton onClick={() => gameStore.endMove(gameAddress)}>
           End move
         </ControlButton>
       </ControlsContainer>
