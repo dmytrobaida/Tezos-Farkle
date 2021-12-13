@@ -8,6 +8,6 @@ export const GameScene: React.FC<{
 }> = ({ onStart }) => {
   useEffect(() => {
     onStart(gameWindowId);
-  }, [onStart]);
+  }, []);
   return <GameContainer id={gameWindowId} />;
 };

@@ -83,7 +83,7 @@ export default observer(() => {
             <GameScene onStart={gameStore.startGame.bind(gameStore)} />
           </GameFrame>
         </WindowContent>
-        <Toolbar style={{ "justify-content": "center" }}>
+        <Toolbar style={{ justifyContent: "center" }}>
           <Button onClick={() => gameStore.throwDices(gameAddress)}>
             Roll dices
           </Button>
@@ -99,9 +99,6 @@ export default observer(() => {
           <List>
             <ListItem>
               Total: {gamersInfos?.me.points.toNumber()} points
-            </ListItem>
-            <ListItem>
-              Current: {gameStore.currentGame?.movePoints.toNumber()} points
             </ListItem>
             <ListItem>
               Current: {gameStore.currentGame?.movePoints.toNumber()} points
@@ -130,9 +127,6 @@ export default observer(() => {
           <List>
             <ListItem>
               Total: {gamersInfos?.other.points.toNumber()} points
-            </ListItem>
-            <ListItem>
-              Current: {gameStore.currentGame?.movePoints.toNumber()} points
             </ListItem>
             <ListItem>
               Current: {gameStore.currentGame?.movePoints.toNumber()} points

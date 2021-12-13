@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import { Window } from "react95";
 
-import { BaseButton } from "ui/components";
-
 export const PageContainer = styled.div`
   position: relative;
   background-color: #282c34;
