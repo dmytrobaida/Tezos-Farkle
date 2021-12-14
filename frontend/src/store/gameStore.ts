@@ -17,13 +17,17 @@ export class GameStore {
   async startGame(gameWindowId: string) {
     await this.game.start(gameWindowId);
     if (this.currentGame != null) {
-      this.game.setDiceValues(
+      this.game.initGame(
         this.currentGame.currentPlayerDices.map((d) => d.toNumber())
       );
+    } else {
+      this.game.initGame([1, 2, 3, 4, 5, 6]);
     }
   }
 
   async throwDices(gameAddress: string) {
+    this.game.initGame([1, 2, 3]);
+    this.game.throwDices([1, 2, 3, 4, 5]);
     const api = this.getApi();
     const gameState = await api.getGameState(gameAddress);
     const selectedDices: number[] = [];
@@ -32,9 +36,11 @@ export class GameStore {
     }
     const newGameState = await api.throwDices(gameAddress, selectedDices);
     runInAction(() => {
-      this.game.throwDices(
-        newGameState.currentPlayerDices.map((d) => d.toNumber())
+      const diceValues = newGameState.currentPlayerDices.map((d) =>
+        d.toNumber()
       );
+      this.game.initGame(diceValues);
+      this.game.throwDices(diceValues);
       this.currentGame = newGameState;
     });
   }
@@ -58,7 +64,7 @@ export class GameStore {
   async joinGame(gameAddress: string) {
     const api = this.getApi();
     const gameState = await api.getGameState(gameAddress);
-    if (gameState.state.toNumber() === GameState.Started) {
+    if (gameState.state.toNumber() >= GameState.Started) {
       runInAction(() => {
         this.currentGame = gameState;
       });

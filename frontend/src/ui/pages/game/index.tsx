@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useEffect, useMemo } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import {
   Window,
   WindowContent,
@@ -30,6 +30,7 @@ const numberToImageMap: { [key: number]: string } = {
 export default observer(() => {
   const { gameStore, tezosStore } = useAppStores();
   const location = useLocation();
+  const navigate = useNavigate();
   const { gameAddress } = location.state || {};
   const pointsMap = useMemo(() => {
     let map: { owner: string; points: number }[] = [];
@@ -58,10 +59,11 @@ export default observer(() => {
       if (gameStore.currentGame?.winner === tezosStore.address) {
         alert("You won this game! Congratulations!");
       } else {
-        alert("Sorry but you lose this game :(. Try ti win next time!");
+        alert("Sorry but you lost at this game :(. Try to win next time!");
       }
+      navigate("/main", { replace: true });
     }
-  }, [gameStore.currentGame, tezosStore.address]);
+  }, [gameStore.currentGame, tezosStore.address, navigate]);
 
   if (gameAddress == null) {
     return <Navigate to={"/main"} replace={true} />;

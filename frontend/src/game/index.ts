@@ -8,7 +8,7 @@ const onScenePreload = (scene: Phaser.Scene) => {
   });
 };
 
-const onSceneCreate = (
+const createDices = (
   scene: Phaser.Scene,
   diceCount: number,
   onClick: (index: number) => void
@@ -32,6 +32,7 @@ const onSceneCreate = (
 export class FarkleGame {
   private dices: Dice[] = [];
   private selectedDices: { [key: number]: boolean } = {};
+  private game!: Phaser.Game;
 
   private toggleDice = (index: number) => {
     if (this.selectedDices[index]) {
@@ -42,53 +43,60 @@ export class FarkleGame {
   };
 
   start(gameWindowId: string) {
-    const that = this;
+    return new Promise<void>((resolve) => {
+      this.game = new Phaser.Game({
+        type: Phaser.AUTO,
+        parent: gameWindowId,
+        width: "100",
+        height: "100",
+        transparent: true,
+        physics: {
+          default: "arcade",
+          arcade: {
+            gravity: { y: 0 },
+          },
+        },
+        scene: {
+          preload: function () {
+            onScenePreload(this);
+          },
+          create: function () {
+            resolve();
+          },
+        },
+      });
+    });
+  }
 
-    return new Promise<void>(
-      (resolve) =>
-        new Phaser.Game({
-          type: Phaser.AUTO,
-          parent: gameWindowId,
-          width: "100",
-          height: "100",
-          transparent: true,
-          physics: {
-            default: "arcade",
-            arcade: {
-              gravity: { y: 0 },
-            },
-          },
-          scene: {
-            preload: function () {
-              onScenePreload(this);
-            },
-            create: function () {
-              const dices = onSceneCreate(this, 6, that.toggleDice.bind(that));
-              dices.forEach((dice, i) => {
-                that.dices.push(dice);
-                if (i !== 0) {
-                  Phaser.Display.Align.In.RightCenter(
-                    dice.sprite,
-                    dices[i - 1].sprite,
-                    100
-                  );
-                }
-              });
-              resolve();
-            },
-          },
-        })
-    );
+  initGame(values: number[]) {
+    this.selectedDices = {};
+    const scene = this.game.scene.getAt(0);
+    if (scene != null) {
+      if (this.dices.length > 0) {
+        this.dices.forEach((dice) => dice.sprite.destroy());
+        this.dices = [];
+      }
+      const dices = createDices(
+        scene,
+        values.length,
+        this.toggleDice.bind(this)
+      );
+      dices.forEach((dice, i) => {
+        this.dices.push(dice);
+        if (i !== 0) {
+          Phaser.Display.Align.In.RightCenter(
+            dice.sprite,
+            dices[i - 1].sprite,
+            100
+          );
+        }
+        dice.sprite.setFrame(values[i] === 0 ? 0 : values[i] - 1);
+      });
+    }
   }
 
   throwDices(values: number[]) {
     this.dices.forEach((dice, i) => dice.throwDice(values[i]));
-  }
-
-  setDiceValues(values: number[]) {
-    for (let i = 0; i < values.length; i++) {
-      this.dices[i]?.sprite.setFrame(values[i] === 0 ? 0 : values[i] - 1);
-    }
   }
 
   getSelectedDices() {
