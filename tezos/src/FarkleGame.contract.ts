@@ -1,24 +1,9 @@
 import * as Constants from './Constants';
 import type * as Types from './Types';
 
-type CalculatePointsParams = TRecord<{
-    size: TNat;
-    maxPoints: TNat;
-    regularPoints: TNat;
-}>;
-
-type GetAtIndexParams = TRecord<{
-    list: TList<TNat>;
-    index: TNat;
-}>;
-
-type GetNextKeyParams = TRecord<{
-    keys: TList<TAddress>;
-    afterKey: TAddress;
-}>;
-
+// Calculate game points based on Farkle game rules
 //@ts-ignore
-export const calculatePoints: TLambda<CalculatePointsParams, TNat> = (params: CalculatePointsParams): TNat => {
+export const calculatePoints: TLambda<Types.CalculatePointsParams, TNat> = (params: Types.CalculatePointsParams): TNat => {
     if (params.size == 3) {
         return params.maxPoints;
     } else if (params.size == 6) {
@@ -30,6 +15,7 @@ export const calculatePoints: TLambda<CalculatePointsParams, TNat> = (params: Ca
     }
 };
 
+// Get dice value in range from 1 to 6 based on random seed
 //@ts-ignore
 export const getDiceValue: TLambda<TNat, TNat> = (seed: TNat): TNat => {
     // Sets dice value based on random seed
@@ -55,11 +41,13 @@ export const getDiceValue: TLambda<TNat, TNat> = (seed: TNat): TNat => {
     return diceValue;
 };
 
+// Calculate next random seed
 //@ts-ignore
 export const getNextRandomValue: TLambda<TNat, TNat> = (seed: TNat): TNat => (seed * 16807) % 2147483647;
 
+// Get number at position in a list
 //@ts-ignore
-export const getAtIndex: TLambda<GetAtIndexParams, TNat> = (params: GetAtIndexParams): TNat => {
+export const getAtIndex: TLambda<Types.GetAtIndexParams, TNat> = (params: Types.GetAtIndexParams): TNat => {
     let index = 0;
     let foundItem = 0;
     for (const li of params.list) {
@@ -71,6 +59,7 @@ export const getAtIndex: TLambda<GetAtIndexParams, TNat> = (params: GetAtIndexPa
     return foundItem;
 };
 
+// Calculate points for call dices
 //@ts-ignore
 export const calculateTotalPoints: TLambda<TList<TNat>, TNat> = (dices: TList<TNat>): TNat => {
     // Calculates points
@@ -113,8 +102,9 @@ export const calculateTotalPoints: TLambda<TList<TNat>, TNat> = (dices: TList<TN
     return totalPoints;
 };
 
+// Get key in list right after specified one
 //@ts-ignore
-export const getNextKey: TLambda<GetNextKeyParams, TAddress> = (params: GetNextKeyParams): TAddress => {
+export const getNextKey: TLambda<Types.GetNextKeyParams, TAddress> = (params: Types.GetNextKeyParams): TAddress => {
     let index = 0;
     let foundIndex = 0;
     const keys: TList<TAddress> = params.keys;
@@ -146,6 +136,7 @@ export class DummyContract {
     };
 }
 
+// Main game contract
 @Contract
 export class FarkleGame {
     storage: Types.TFarkleGameStorage = {
@@ -271,6 +262,7 @@ export class FarkleGame {
     }
 }
 
+// Main contract for creating and storing games
 @Contract
 export class FarkleGameFactory {
     storage: Types.TFarkleGameFactoryStorage = {

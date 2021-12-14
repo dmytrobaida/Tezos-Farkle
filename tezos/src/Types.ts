@@ -7,7 +7,7 @@ export interface TFarkleGameStorage {
     winner: TOption<TAddress>;
     currentPlayerDices: TList<TNat>;
     currentPlayerLeavedDices: TList<TNat>;
-    bet: TMutez
+    bet: TMutez;
     players: TMap<TAddress, TNat>;
     currentPlayer: TOption<TAddress>;
 }
@@ -16,3 +16,19 @@ export interface TFarkleGameFactoryStorage {
     activeGames: TSet<TAddress>;
     inactiveGames: TSet<TAddress>;
 }
+
+export type CalculatePointsParams = TRecord<{
+    size: TNat;
+    maxPoints: TNat;
+    regularPoints: TNat;
+}>;
+
+export type GetAtIndexParams = TRecord<{
+    list: TList<TNat>;
+    index: TNat;
+}>;
+
+export type GetNextKeyParams = TRecord<{
+    keys: TList<TAddress>;
+    afterKey: TAddress;
+}>;
