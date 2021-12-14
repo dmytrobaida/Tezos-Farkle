@@ -191,7 +191,8 @@ export class FarkleGame {
 
         const currentDicesPoints = calculateTotalPoints(dices);
 
-        if (currentDicesPoints == 0 && this.storage.moveStage > 0) {
+        if (currentDicesPoints == 0) {
+            // TODO: add end move logic
             this.storage.movePoints = 0;
         } else {
             const leavedDicesPoints = calculateTotalPoints(leavedDices);
