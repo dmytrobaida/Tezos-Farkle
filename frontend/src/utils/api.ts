@@ -66,4 +66,10 @@ export class GameApi {
     const farkleGameState: FarkleGameState = await contract.storage();
     return farkleGameState;
   }
+
+  async getGameState(gameAddress: string) {
+    const contract = await this.tezosToolkit.wallet.at(gameAddress);
+    const farkleGameState: FarkleGameState = await contract.storage();
+    return farkleGameState;
+  }
 }

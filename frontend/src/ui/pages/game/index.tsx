@@ -16,14 +16,7 @@ import { useAppStores } from "store";
 import { GameScene } from "ui/components";
 import { FarkleGameState } from "utils/types";
 
-import {
-  PageContainer,
-  GameFrame,
-  Player1ThrowsContainer,
-  Player2ThrowsContainer,
-  ResultLine,
-  ControlsContainer,
-} from "./styled";
+import { PageContainer, GameFrame, ResultLine } from "./styled";
 
 const numberToImageMap: { [key: number]: string } = {
   1: "la-dice-one",
@@ -78,6 +71,35 @@ export default observer(() => {
     <PageContainer>
       <Window>
         <WindowHeader>Farkle!</WindowHeader>
+        <Toolbar style={{ justifyContent: "center" }}>
+          <List inline>
+            <ListItem>
+              Your points: {gamersInfos?.me.points.toNumber()}
+            </ListItem>
+            <ListItem>
+              Current move points:{" "}
+              {gameStore.currentGame?.movePoints.toNumber()}
+            </ListItem>
+            {(gameStore.currentGame?.currentPlayerLeavedDices?.length || 0) >
+              0 && (
+              <ListItem>
+                <ResultLine>
+                  {gameStore.currentGame?.currentPlayerLeavedDices.map(
+                    (dice, i) => (
+                      <i
+                        key={i}
+                        className={"las " + numberToImageMap[dice.toNumber()]}
+                      ></i>
+                    )
+                  )}
+                </ResultLine>
+              </ListItem>
+            )}
+            <ListItem>
+              Other player points: {gamersInfos?.other.points.toNumber()}
+            </ListItem>
+          </List>
+        </Toolbar>
         <WindowContent>
           <GameFrame>
             <GameScene onStart={gameStore.startGame.bind(gameStore)} />
@@ -88,68 +110,14 @@ export default observer(() => {
             Roll dices
           </Button>
           <Bar size={35} />
-          <Button onClick={() => gameStore.endMove(gameAddress)} disabled>
+          <Button
+            onClick={() => gameStore.endMove(gameAddress)}
+            disabled={gameStore.currentGame?.moveStage.toNumber() === 0}
+          >
             End move
           </Button>
         </Toolbar>
       </Window>
-      <Player1ThrowsContainer>
-        <WindowHeader>You</WindowHeader>
-        <WindowContent style={{ padding: 0 }}>
-          <List>
-            <ListItem>
-              Total: {gamersInfos?.me.points.toNumber()} points
-            </ListItem>
-            <ListItem>
-              Current: {gameStore.currentGame?.movePoints.toNumber()} points
-            </ListItem>
-            {(gameStore.currentGame?.currentPlayerLeavedDices?.length || 0) >
-              0 && (
-              <ListItem>
-                <ResultLine>
-                  {gameStore.currentGame?.currentPlayerLeavedDices.map(
-                    (dice, i) => (
-                      <i
-                        key={i}
-                        className={"las " + numberToImageMap[dice.toNumber()]}
-                      ></i>
-                    )
-                  )}
-                </ResultLine>
-              </ListItem>
-            )}
-          </List>
-        </WindowContent>
-      </Player1ThrowsContainer>
-      <Player2ThrowsContainer>
-        <WindowHeader>Other</WindowHeader>
-        <WindowContent style={{ padding: 0 }}>
-          <List>
-            <ListItem>
-              Total: {gamersInfos?.other.points.toNumber()} points
-            </ListItem>
-            <ListItem>
-              Current: {gameStore.currentGame?.movePoints.toNumber()} points
-            </ListItem>
-            {(gameStore.currentGame?.currentPlayerLeavedDices?.length || 0) >
-              0 && (
-              <ListItem>
-                <ResultLine>
-                  {gameStore.currentGame?.currentPlayerLeavedDices.map(
-                    (dice, i) => (
-                      <i
-                        key={i}
-                        className={"las " + numberToImageMap[dice.toNumber()]}
-                      ></i>
-                    )
-                  )}
-                </ResultLine>
-              </ListItem>
-            )}
-          </List>
-        </WindowContent>
-      </Player2ThrowsContainer>
-      <ControlsContainer></ControlsContainer>
     </PageContainer>
   );
 });

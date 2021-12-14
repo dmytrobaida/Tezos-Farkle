@@ -24,12 +24,18 @@ export class GameStore {
   }
 
   async throwDices(gameAddress: string) {
-    const gameState = await this.getApi()?.throwDices(gameAddress);
+    const api = this.getApi();
+    const gameState = await api.getGameState(gameAddress);
+    const selectedDices: number[] = [];
+    if (gameState.moveStage.toNumber() > 0) {
+      selectedDices.push(...this.game.getSelectedDices());
+    }
+    const newGameState = await api.throwDices(gameAddress, selectedDices);
     runInAction(() => {
       this.game.throwDices(
-        gameState.currentPlayerDices.map((d) => d.toNumber())
+        newGameState.currentPlayerDices.map((d) => d.toNumber())
       );
-      this.currentGame = gameState;
+      this.currentGame = newGameState;
     });
   }
 

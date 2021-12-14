@@ -5,12 +5,13 @@ const random = new Phaser.Math.RandomDataGenerator();
 export class Dice {
   sprite: Phaser.Physics.Arcade.Sprite;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, onClick: () => void) {
     this.sprite = scene.physics.add.sprite(x, y, "dice");
-    this.sprite.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, 100, 100),
-      Phaser.Geom.Rectangle.Contains
-    );
+    this.sprite.setInteractive({
+      hitArea: new Phaser.Geom.Rectangle(0, 0, 96, 96),
+      hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+      useHandCursor: true,
+    });
 
     this.sprite.on("pointerover", () => {
       this.sprite.alpha = 0.5;
@@ -18,6 +19,15 @@ export class Dice {
 
     this.sprite.on("pointerout", () => {
       this.sprite.alpha = 1;
+    });
+
+    this.sprite.on("pointerdown", () => {
+      onClick();
+      if (this.sprite.isTinted) {
+        this.sprite.clearTint();
+      } else {
+        this.sprite.setTint(0xff0000);
+      }
     });
   }
 
