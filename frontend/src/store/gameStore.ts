@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 import { FarkleGame } from "game";
 import { GameApi } from "utils/api";
-import { FarkleGameState } from "utils/types";
+import { FarkleGameState, GameState } from "utils/types";
 
 type GetApiFn = () => GameApi;
 export class GameStore {
@@ -56,13 +56,36 @@ export class GameStore {
   }
 
   async joinGame(gameAddress: string) {
-    const gameState = await this.getApi()?.startNewGame(gameAddress);
+    const api = this.getApi();
+    const gameState = await api.getGameState(gameAddress);
+    if (gameState.state.toNumber() === GameState.Started) {
+      runInAction(() => {
+        this.currentGame = gameState;
+      });
+      return;
+    }
+    const newGameState = await api.startNewGame(
+      gameAddress,
+      gameState.bet.toNumber()
+    );
     runInAction(() => {
-      this.currentGame = gameState;
+      this.currentGame = newGameState;
     });
   }
 
   async createNewGame() {
-    await this.getApi()?.createNewGame();
+    const bet = parseInt(prompt("Enter bet in TEZ", "1") || "1");
+    if (isNaN(bet) || bet <= 0) {
+      alert("Please enter right value");
+      return;
+    }
+    await this.getApi()?.createNewGame(bet);
+  }
+
+  async updateCurrentGame(gameAddress: string) {
+    const gameState = await this.getApi()?.getGameState(gameAddress);
+    runInAction(() => {
+      this.currentGame = gameState;
+    });
   }
 }

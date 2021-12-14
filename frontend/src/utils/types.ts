@@ -1,3 +1,4 @@
+import { MichelsonMap } from "@taquito/taquito";
 import { BigNumber } from "bignumber.js";
 
 export interface FarkleGameState {
@@ -5,16 +6,14 @@ export interface FarkleGameState {
   creator: string;
   state: BigNumber;
   seed: BigNumber;
-  player1: string;
-  player2: string;
-  player1Points: BigNumber;
-  player2Points: BigNumber;
-  currentPlayer: BigNumber;
+  currentPlayer: string;
   moveStage: BigNumber;
   movePoints: BigNumber;
   winner: string;
   currentPlayerDices: BigNumber[];
   currentPlayerLeavedDices: BigNumber[];
+  bet: BigNumber;
+  players: MichelsonMap<string, BigNumber>;
 }
 
 export interface FarkleGameFactoryState {
@@ -22,9 +21,18 @@ export interface FarkleGameFactoryState {
   inactiveGames: string[];
 }
 
-export const GameState: { [key: number]: string } = {
+export const GameState = {
+  Created: 0,
+  PlayerJoined: 1,
+  Started: 2,
+  Finished: 3,
+};
+
+export const GameStateMap: { [key: number]: string } = {
   0: "Created",
   1: "PlayerJoined",
   2: "Started",
   3: "Finished",
 };
+
+export const TezToMutezMultiplier = 1000000;

@@ -3,7 +3,9 @@ import type * as Types from './Types';
 
 // Calculate game points based on Farkle game rules
 //@ts-ignore
-export const calculatePoints: TLambda<Types.CalculatePointsParams, TNat> = (params: Types.CalculatePointsParams): TNat => {
+export const calculatePoints: TLambda<Types.CalculatePointsParams, TNat> = (
+    params: Types.CalculatePointsParams,
+): TNat => {
     if (params.size == 3) {
         return params.maxPoints;
     } else if (params.size == 6) {
@@ -183,6 +185,9 @@ export class FarkleGame {
         if (this.storage.moveStage == 0 && leaveDiceIndexes.isSome() && leaveDiceIndexes.openSome().size() > 0) {
             Sp.failWith('You cant leave dices at current stage!');
         }
+        if (this.storage.moveStage > 0 && leaveDiceIndexes.isSome() && leaveDiceIndexes.openSome().size() == 0) {
+            Sp.failWith('You should leave at least one dice to make this move!');
+        }
 
         const dices: TList<TNat> = [];
         const leavedDices: TList<TNat> = [];
@@ -216,17 +221,24 @@ export class FarkleGame {
 
         // Check if current points is zero
         if (currentDicesPoints == 0) {
-            // Player loses all move points
+            // Player loses all move points and move goes to next player
             this.storage.moveStage = 0;
             this.storage.movePoints = 0;
             this.storage.currentPlayerDices = [];
             this.storage.currentPlayerLeavedDices = [];
+            this.storage.currentPlayer = Sp.some(
+                getNextKey({
+                    keys: this.storage.players.keys(),
+                    afterKey: this.storage.currentPlayer.openSome(),
+                }),
+            );
         } else {
             // Calculation of leaved dice points
             const leavedDicesPoints = calculateTotalPoints(leavedDices);
             this.storage.movePoints = leavedDicesPoints + currentDicesPoints;
             this.storage.currentPlayerDices = dices;
             this.storage.currentPlayerLeavedDices = leavedDices;
+            this.storage.moveStage = this.storage.moveStage + 1;
         }
 
         // Check if some player win
@@ -236,9 +248,6 @@ export class FarkleGame {
             this.storage.winner = Sp.some(Sp.sender);
             // Transfer money to the winner!
             Sp.transfer(Sp.unit, Sp.balance, Sp.contract<TUnit>(Sp.sender).openSome());
-        } else {
-            // Increment move stage
-            this.storage.moveStage = this.storage.moveStage + 1;
         }
     }
 

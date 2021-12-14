@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import {
   Window,
@@ -14,7 +14,7 @@ import {
 
 import { useAppStores } from "store";
 import { GameScene } from "ui/components";
-import { FarkleGameState } from "utils/types";
+import { GameState } from "utils/types";
 
 import { PageContainer, GameFrame, ResultLine } from "./styled";
 
@@ -27,41 +27,41 @@ const numberToImageMap: { [key: number]: string } = {
   6: "la-dice-six",
 };
 
-const sortGamersInfo = (
-  myAddress: string,
-  gameState: FarkleGameState | null
-) => {
-  if (gameState == null) {
-    return null;
-  }
-  if (myAddress === gameState.player1) {
-    return {
-      me: {
-        points: gameState.player1Points,
-      },
-      other: {
-        points: gameState.player2Points,
-      },
-    };
-  }
-  return {
-    me: {
-      points: gameState.player2Points,
-    },
-    other: {
-      points: gameState.player1Points,
-    },
-  };
-};
-
 export default observer(() => {
   const { gameStore, tezosStore } = useAppStores();
   const location = useLocation();
   const { gameAddress } = location.state || {};
-  const gamersInfos = useMemo(
-    () => sortGamersInfo(tezosStore.address, gameStore.currentGame),
-    [tezosStore, gameStore]
-  );
+  const pointsMap = useMemo(() => {
+    let map: { owner: string; points: number }[] = [];
+    let myPoints: { owner: string; points: number } | null = null;
+    gameStore.currentGame?.players.forEach((value, key) => {
+      if (key === tezosStore.address) {
+        myPoints = {
+          owner: "Your",
+          points: value.toNumber(),
+        };
+      } else {
+        map.push({
+          owner: `Player (${key.substring(key.length - 4, key.length)})`,
+          points: value.toNumber(),
+        });
+      }
+    });
+    if (myPoints != null) {
+      map = [myPoints, ...map];
+    }
+    return map;
+  }, [tezosStore, gameStore, gameStore.currentGame]);
+
+  useEffect(() => {
+    if (gameStore.currentGame?.state.toNumber() === GameState.Finished) {
+      if (gameStore.currentGame?.winner === tezosStore.address) {
+        alert("You won this game! Congratulations!");
+      } else {
+        alert("Sorry but you lose this game :(. Try ti win next time!");
+      }
+    }
+  }, [gameStore.currentGame, tezosStore.address]);
 
   if (gameAddress == null) {
     return <Navigate to={"/main"} replace={true} />;
@@ -70,15 +70,23 @@ export default observer(() => {
   return (
     <PageContainer>
       <Window>
-        <WindowHeader>Farkle!</WindowHeader>
+        <WindowHeader style={{ textAlign: "center" }}>
+          {gameStore.currentGame?.currentPlayer === tezosStore.address ? (
+            <span style={{ color: "GreenYellow" }}>Your turn!</span>
+          ) : (
+            <span style={{ color: "red" }}>Wait for other player's moves!</span>
+          )}
+        </WindowHeader>
         <Toolbar style={{ justifyContent: "center" }}>
           <List inline>
+            {pointsMap.map((p) => (
+              <ListItem>
+                {p.owner} points: {p.points}
+              </ListItem>
+            ))}
+
             <ListItem>
-              Your points: {gamersInfos?.me.points.toNumber()}
-            </ListItem>
-            <ListItem>
-              Current move points:{" "}
-              {gameStore.currentGame?.movePoints.toNumber()}
+              Move points: {gameStore.currentGame?.movePoints.toNumber()}
             </ListItem>
             {(gameStore.currentGame?.currentPlayerLeavedDices?.length || 0) >
               0 && (
@@ -95,9 +103,6 @@ export default observer(() => {
                 </ResultLine>
               </ListItem>
             )}
-            <ListItem>
-              Other player points: {gamersInfos?.other.points.toNumber()}
-            </ListItem>
           </List>
         </Toolbar>
         <WindowContent>
@@ -106,7 +111,12 @@ export default observer(() => {
           </GameFrame>
         </WindowContent>
         <Toolbar style={{ justifyContent: "center" }}>
-          <Button onClick={() => gameStore.throwDices(gameAddress)}>
+          <Button
+            onClick={() => gameStore.throwDices(gameAddress)}
+            disabled={
+              gameStore.currentGame?.currentPlayer !== tezosStore.address
+            }
+          >
             Roll dices
           </Button>
           <Bar size={35} />
@@ -115,6 +125,9 @@ export default observer(() => {
             disabled={gameStore.currentGame?.moveStage.toNumber() === 0}
           >
             End move
+          </Button>
+          <Button onClick={() => gameStore.updateCurrentGame(gameAddress)}>
+            <i className="las la-redo-alt" style={{ fontSize: "25px" }}></i>
           </Button>
         </Toolbar>
       </Window>

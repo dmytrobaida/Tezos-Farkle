@@ -1,20 +1,27 @@
 import { TezosToolkit } from "@taquito/taquito";
 
-import { FarkleGameFactoryState, FarkleGameState } from "./types";
+import {
+  FarkleGameFactoryState,
+  FarkleGameState,
+  TezToMutezMultiplier,
+} from "./types";
 
-const test: string | undefined = "KT19ARHPtcBsgBs55obUSE2FzMXZ7QcQNoBz";
+const test: string | undefined = "KT1VgXhfUf8emWT9U8WowUbj3X7PRRVFewJ4";
 const factoryContractAddress =
   test || process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
 
 export class GameApi {
   constructor(private tezosToolkit: TezosToolkit) {}
 
-  async createNewGame() {
+  async createNewGame(bet: number) {
+    if (bet <= 0) {
+      return [];
+    }
     if (factoryContractAddress != null && factoryContractAddress !== "") {
       const contract = await this.tezosToolkit.wallet.at(
         factoryContractAddress
       );
-      const operation = await contract.methods.createNewGame().send();
+      const operation = await contract.methods.createNewGame(bet).send();
       await operation.confirmation();
       const storage: FarkleGameFactoryState = await contract.storage();
       return storage.activeGames;
@@ -41,9 +48,14 @@ export class GameApi {
     }
   }
 
-  async startNewGame(gameAddress: string) {
+  async startNewGame(gameAddress: string, bet: number) {
+    if (bet <= 0) {
+      return null;
+    }
     const contract = await this.tezosToolkit.wallet.at(gameAddress);
-    const operation = await contract.methods.startGame().send();
+    const operation = await contract.methods
+      .startGame()
+      .send({ amount: bet * TezToMutezMultiplier, mutez: true });
     await operation.confirmation();
     const farkleGameState: FarkleGameState = await contract.storage();
     return farkleGameState;

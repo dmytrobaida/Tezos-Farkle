@@ -19,7 +19,7 @@ import {
 
 import { useAppStores } from "store";
 import { parseBalance } from "utils";
-import { GameState } from "utils/types";
+import { GameStateMap } from "utils/types";
 
 import { PageContainer, ContentContainer } from "./styled";
 
@@ -76,6 +76,12 @@ export default observer(() => {
                   >
                     Create new
                   </TableHeadCell>
+                  <TableHeadCell onClick={gameStore.loadGames}>
+                    <i
+                      className="las la-redo-alt"
+                      style={{ fontSize: "25px" }}
+                    ></i>
+                  </TableHeadCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -83,9 +89,9 @@ export default observer(() => {
                   <TableRow key={i}>
                     <TableDataCell>{game.address}</TableDataCell>
                     <TableDataCell>{game.creator}</TableDataCell>
-                    <TableDataCell>{10} TEZ</TableDataCell>
+                    <TableDataCell>{game.bet.toNumber()} TEZ</TableDataCell>
                     <TableDataCell>
-                      {GameState[game.state.toNumber()]}
+                      {GameStateMap[game.state.toNumber()]}
                     </TableDataCell>
                     <TableHeadCell
                       style={{ cursor: "pointer" }}
