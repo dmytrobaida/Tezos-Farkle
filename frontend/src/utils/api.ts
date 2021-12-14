@@ -6,22 +6,27 @@ import {
   TezToMutezMultiplier,
 } from "./types";
 
-const test: string | undefined = "KT1VgXhfUf8emWT9U8WowUbj3X7PRRVFewJ4";
+const test: string | undefined = "KT1TivVycy3hsrXF7J3GErv56m3PUZsYeSz1";
 const factoryContractAddress =
   test || process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
 
 export class GameApi {
   constructor(private tezosToolkit: TezosToolkit) {}
 
-  async createNewGame(bet: number) {
+  async createNewGame(bet: number, pointsToWin: number) {
     if (bet <= 0) {
+      return [];
+    }
+    if (pointsToWin <= 0) {
       return [];
     }
     if (factoryContractAddress != null && factoryContractAddress !== "") {
       const contract = await this.tezosToolkit.wallet.at(
         factoryContractAddress
       );
-      const operation = await contract.methods.createNewGame(bet).send();
+      const operation = await contract.methods
+        .createNewGame(bet, pointsToWin)
+        .send();
       await operation.confirmation();
       const storage: FarkleGameFactoryState = await contract.storage();
       return storage.activeGames;

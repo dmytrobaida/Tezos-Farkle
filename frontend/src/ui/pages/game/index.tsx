@@ -79,8 +79,8 @@ export default observer(() => {
         </WindowHeader>
         <Toolbar style={{ justifyContent: "center" }}>
           <List inline>
-            {pointsMap.map((p) => (
-              <ListItem>
+            {pointsMap.map((p, i) => (
+              <ListItem key={i}>
                 {p.owner} points: {p.points}
               </ListItem>
             ))}

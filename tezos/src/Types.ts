@@ -10,6 +10,7 @@ export interface TFarkleGameStorage {
     bet: TMutez;
     players: TMap<TAddress, TNat>;
     currentPlayer: TOption<TAddress>;
+    pointsToWin: TNat;
 }
 
 export interface TFarkleGameFactoryStorage {

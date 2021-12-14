@@ -62,6 +62,12 @@ export default observer(() => {
       <ContentContainer>
         <Window>
           <WindowHeader>All games</WindowHeader>
+          <Toolbar style={{ justifyContent: "flex-end" }}>
+            <Button onClick={createNewGameHandler}>Create new</Button>
+            <Button onClick={gameStore.loadGames}>
+              <i className="las la-redo-alt" style={{ fontSize: "25px" }}></i>
+            </Button>
+          </Toolbar>
           <WindowContent>
             <Table>
               <TableHead>
@@ -69,19 +75,8 @@ export default observer(() => {
                   <TableHeadCell>Contract address</TableHeadCell>
                   <TableHeadCell>Creator address</TableHeadCell>
                   <TableHeadCell>Bet</TableHeadCell>
+                  <TableHeadCell>Points to win</TableHeadCell>
                   <TableHeadCell>Status</TableHeadCell>
-                  <TableHeadCell
-                    style={{ cursor: "pointer" }}
-                    onClick={createNewGameHandler}
-                  >
-                    Create new
-                  </TableHeadCell>
-                  <TableHeadCell onClick={gameStore.loadGames}>
-                    <i
-                      className="las la-redo-alt"
-                      style={{ fontSize: "25px" }}
-                    ></i>
-                  </TableHeadCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -90,6 +85,7 @@ export default observer(() => {
                     <TableDataCell>{game.address}</TableDataCell>
                     <TableDataCell>{game.creator}</TableDataCell>
                     <TableDataCell>{game.bet.toNumber()} TEZ</TableDataCell>
+                    <TableDataCell>{game.pointsToWin.toNumber()}</TableDataCell>
                     <TableDataCell>
                       {GameStateMap[game.state.toNumber()]}
                     </TableDataCell>

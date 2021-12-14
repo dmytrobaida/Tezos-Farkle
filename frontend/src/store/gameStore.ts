@@ -79,7 +79,14 @@ export class GameStore {
       alert("Please enter right value");
       return;
     }
-    await this.getApi()?.createNewGame(bet);
+    const pointsToWin = parseInt(
+      prompt("Enter max points to win the game", "1000") || "1000"
+    );
+    if (isNaN(pointsToWin) || pointsToWin <= 0) {
+      alert("Please enter right value");
+      return;
+    }
+    await this.getApi()?.createNewGame(bet, pointsToWin);
   }
 
   async updateCurrentGame(gameAddress: string) {

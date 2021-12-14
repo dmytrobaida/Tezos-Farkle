@@ -14,6 +14,7 @@ export interface FarkleGameState {
   currentPlayerLeavedDices: BigNumber[];
   bet: BigNumber;
   players: MichelsonMap<string, BigNumber>;
+  pointsToWin: BigNumber;
 }
 
 export interface FarkleGameFactoryState {

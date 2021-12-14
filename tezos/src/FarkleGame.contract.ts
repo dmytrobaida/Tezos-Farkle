@@ -153,10 +153,10 @@ export class FarkleGame {
         bet: 0,
         currentPlayer: Sp.none,
         players: [],
+        pointsToWin: 0,
     };
 
     diceCount: TNat = 6;
-    maxPointsToWin: TNat = 2000;
 
     @EntryPoint
     startGame() {
@@ -242,7 +242,7 @@ export class FarkleGame {
         }
 
         // Check if some player win
-        if (this.storage.movePoints + this.storage.players.get(Sp.sender) >= this.maxPointsToWin) {
+        if (this.storage.movePoints + this.storage.players.get(Sp.sender) >= this.storage.pointsToWin) {
             // Game is finished!
             this.storage.state = Constants.GameState.Finished;
             this.storage.winner = Sp.some(Sp.sender);
@@ -282,7 +282,8 @@ export class FarkleGameFactory {
     bytesToNatMap: TMap<TBytes, TNat> = Constants.BytesToNatMap;
 
     @EntryPoint
-    createNewGame(bet: TMutez) {
+    createNewGame(bet: TMutez, pointsToWin: number) {
+        Sp.verify(pointsToWin >= 1000, 'You should set more win points!');
         // Calculate seed for random
         const randomBytes: TBytes = Sp.sha256(Sp.pack(Sp.createContractOperation(DummyContract).address as TString));
         let seed: TNat = 0;
@@ -305,6 +306,7 @@ export class FarkleGameFactory {
             bet: bet,
             players: [[Sp.sender, 0]],
             currentPlayer: Sp.some(Sp.sender),
+            pointsToWin: pointsToWin,
         });
 
         this.storage.activeGames.add(newContractAddress);
@@ -320,7 +322,7 @@ Dev.test({ name: 'FarkleGameFactory' }, () => {
     const fgf = Scenario.originate(new FarkleGameFactory());
     const bob = Scenario.testAccount('Bob');
 
-    Scenario.transfer(fgf.createNewGame(10), {
+    Scenario.transfer(fgf.createNewGame(10, 1000), {
         sender: bob,
     });
     Scenario.verify(fgf.storage.activeGames.size() == 1);
