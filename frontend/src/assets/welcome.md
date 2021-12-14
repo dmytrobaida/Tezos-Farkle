@@ -1,6 +1,11 @@
+# Welcome to the Farkle game!
+
+Simple dice game based on Farkle rules. This project inspired by Kingdome Come Zonk minigame. 
+Main purpose is to recreate game rules using Tezos network as a base for storing game state and logic and connect players between each other.
+
 ## Game rules
 
-Farkle is played by two or more players, with each player in succession having a turn at throwing the dice. Each player's turn results in a score, and the scores for each player accumulate to some winning total (usually 10,000).
+Farkle is played by two or more players, with each player in succession having a turn at throwing the dice. Each player's turn results in a score, and the scores for each player accumulate to some winning total (2,000).
 
 - Each player makes a bet in XTZ.
 - At the beginning of each turn, the player throws all the dice at once.

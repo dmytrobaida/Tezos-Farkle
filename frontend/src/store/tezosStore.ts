@@ -6,7 +6,7 @@ const tezosRpcUrl = process.env.REACT_APP_TEZOS_RPC_URL;
 
 export class TezosStore {
   address = "";
-  balance = "";
+  balance = 0;
   connected = false;
   api!: GameApi;
 
@@ -38,7 +38,7 @@ export class TezosStore {
 
     runInAction(() => {
       this.address = address;
-      this.balance = balance.toString();
+      this.balance = balance.toNumber();
       this.connected = wallet.connected;
       this.api = new GameApi(tezosToolkit);
     });

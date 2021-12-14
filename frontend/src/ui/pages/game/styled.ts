@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Window } from "react95";
 
 export const PageContainer = styled.div`
   position: relative;
@@ -16,7 +15,7 @@ export const PageContainer = styled.div`
 export const GameFrame = styled.div`
   position: relative;
   width: 80vw;
-  height: 76vh;
+  height: 60vh;
   border: 5px solid #cdcdcd;
   background-color: grey;
   display: flex;

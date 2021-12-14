@@ -2,13 +2,13 @@ import { observer } from "mobx-react-lite";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { Window, WindowContent, Cutout, Toolbar, WindowHeader } from "react95";
+import Markdown from "markdown-to-jsx";
 
 import { BaseButton } from "ui/components";
 import { useAppStores } from "store";
 import welcomeFileUrl from "assets/welcome.md";
 
 import { PageContainer } from "./styled";
-import Markdown from "markdown-to-jsx";
 
 export default observer(() => {
   const { tezosStore } = useAppStores();
@@ -34,7 +34,36 @@ export default observer(() => {
         <WindowHeader style={{ textAlign: "center" }}>Farkle!</WindowHeader>
         <WindowContent>
           <Cutout style={{ width: "70vw", height: "70vh" }}>
-            <Markdown className="md" children={markdown} />
+            <Markdown
+              className="md"
+              children={markdown}
+              options={{
+                overrides: {
+                  table: {
+                    props: {
+                      style: {
+                        borderCollapse: "collapse",
+                        width: "100%",
+                      },
+                    },
+                  },
+                  th: {
+                    props: {
+                      style: {
+                        border: "1px solid black",
+                      },
+                    },
+                  },
+                  td: {
+                    props: {
+                      style: {
+                        border: "1px solid black",
+                      },
+                    },
+                  },
+                },
+              }}
+            />
           </Cutout>
         </WindowContent>
         <Toolbar style={{ justifyContent: "center" }}>

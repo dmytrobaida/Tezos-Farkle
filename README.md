@@ -5,7 +5,7 @@ Main purpose is to recreate game rules using Tezos network as a base for storing
 
 ## Game rules
 
-Farkle is played by two or more players, with each player in succession having a turn at throwing the dice. Each player's turn results in a score, and the scores for each player accumulate to some winning total (usually 10,000).
+Farkle is played by two or more players, with each player in succession having a turn at throwing the dice. Each player's turn results in a score, and the scores for each player accumulate to some winning total (2,000).
 
 - Each player makes a bet in XTZ.
 - At the beginning of each turn, the player throws all the dice at once.

@@ -18,6 +18,7 @@ import {
 } from "react95";
 
 import { useAppStores } from "store";
+import { parseBalance } from "utils";
 import { GameState } from "utils/types";
 
 import { PageContainer, ContentContainer } from "./styled";
@@ -53,7 +54,9 @@ export default observer(() => {
         <Toolbar>
           <Button variant="menu">Address: {tezosStore.address}</Button>
           <Bar size={35} />
-          <Button variant="menu">Balance: {tezosStore.balance}</Button>
+          <Button variant="menu">
+            Balance: {parseBalance(tezosStore.balance)} TEZ
+          </Button>
         </Toolbar>
       </AppBar>
       <ContentContainer>
@@ -65,6 +68,7 @@ export default observer(() => {
                 <TableRow>
                   <TableHeadCell>Contract address</TableHeadCell>
                   <TableHeadCell>Creator address</TableHeadCell>
+                  <TableHeadCell>Bet</TableHeadCell>
                   <TableHeadCell>Status</TableHeadCell>
                   <TableHeadCell
                     style={{ cursor: "pointer" }}
@@ -79,6 +83,7 @@ export default observer(() => {
                   <TableRow key={i}>
                     <TableDataCell>{game.address}</TableDataCell>
                     <TableDataCell>{game.creator}</TableDataCell>
+                    <TableDataCell>{10} TEZ</TableDataCell>
                     <TableDataCell>
                       {GameState[game.state.toNumber()]}
                     </TableDataCell>

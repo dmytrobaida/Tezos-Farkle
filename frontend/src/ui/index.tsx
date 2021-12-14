@@ -26,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'ms_sans_serif';
     margin: 0;
   }
-  *::not(.md) {
+  ::not(.md) {
     ${styleReset}
   }
 `;
