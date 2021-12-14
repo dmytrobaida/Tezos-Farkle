@@ -12,6 +12,11 @@ type GetAtIndexParams = TRecord<{
     index: TNat;
 }>;
 
+type GetNextKeyParams = TRecord<{
+    keys: TList<TAddress>;
+    afterKey: TAddress;
+}>;
+
 //@ts-ignore
 export const calculatePoints: TLambda<CalculatePointsParams, TNat> = (params: CalculatePointsParams): TNat => {
     if (params.size == 3) {
@@ -108,6 +113,32 @@ export const calculateTotalPoints: TLambda<TList<TNat>, TNat> = (dices: TList<TN
     return totalPoints;
 };
 
+//@ts-ignore
+export const getNextKey: TLambda<GetNextKeyParams, TAddress> = (params: GetNextKeyParams): TAddress => {
+    let index = 0;
+    let foundIndex = 0;
+    const keys: TList<TAddress> = params.keys;
+    for (const key of keys) {
+        if (key == params.afterKey) {
+            foundIndex = index + 1;
+        }
+        index = index + 1;
+    }
+    if (foundIndex == keys.size()) {
+        foundIndex = 0;
+    }
+    index = 0;
+    let foundItem: TOption<TAddress> = Sp.none;
+    for (const key of keys) {
+        if (index == foundIndex) {
+            foundItem = Sp.some(key);
+        }
+        index = index + 1;
+    }
+    return foundItem.openSome();
+};
+
+// Dummy contract used for random address generation
 @Contract
 export class DummyContract {
     storage = {
@@ -119,18 +150,16 @@ export class DummyContract {
 export class FarkleGame {
     storage: Types.TFarkleGameStorage = {
         creator: Sp.none,
-        player1: Sp.none,
-        player2: Sp.none,
         state: Constants.GameState.Created,
         seed: 0,
         currentPlayerDices: [],
         currentPlayerLeavedDices: [],
-        player1Points: 0,
-        player2Points: 0,
-        currentPlayer: 0,
         moveStage: 0,
         winner: Sp.none,
         movePoints: 0,
+        bet: 0,
+        currentPlayer: Sp.none,
+        players: [],
     };
 
     diceCount: TNat = 6;
@@ -138,29 +167,30 @@ export class FarkleGame {
 
     @EntryPoint
     startGame() {
-        // Sp.verify(this.storage.state != Constants.GameState.Started, 'Game is already started!');
+        Sp.verify(
+            this.storage.state == Constants.GameState.Created || this.storage.state == Constants.GameState.PlayerJoined,
+            'Game is already started!',
+        );
+        Sp.verify(Sp.amount >= this.storage.bet, 'You must bet required amount!');
 
-        // Checks if sender is not player1
-        if (Sp.sender != this.storage.player1.openSome()) {
-            this.storage.player2 = Sp.some(Sp.sender);
+        // Checks if sender is not creator
+        if (Sp.sender != this.storage.creator.openSome()) {
+            this.storage.players.set(Sp.sender, 0);
             this.storage.state = Constants.GameState.PlayerJoined;
         }
         // Starts game if player2 joined
-        if (Sp.sender == this.storage.player1.openSome() && this.storage.state == Constants.GameState.PlayerJoined) {
+        if (Sp.sender == this.storage.creator.openSome() && this.storage.state == Constants.GameState.PlayerJoined) {
             this.storage.state = Constants.GameState.Started;
         }
     }
 
     @EntryPoint
     throwDices(leaveDiceIndexes: TOption<TSet<TNat>>) {
-        // Sp.verify(this.storage.state == Constants.GameState.Started, 'Game is not started yet!');
+        Sp.verify(this.storage.state == Constants.GameState.Started, 'Game is not started yet!');
+        Sp.verify(this.storage.currentPlayer.openSome() == Sp.sender, 'Is not your turn!');
+
         if (this.storage.moveStage == 0 && leaveDiceIndexes.isSome() && leaveDiceIndexes.openSome().size() > 0) {
             Sp.failWith('You cant leave dices at current stage!');
-        }
-        if (this.storage.currentPlayer == 1) {
-            Sp.verify(Sp.sender == this.storage.player1.openSome(), 'Is not your turn!');
-        } else {
-            Sp.verify(Sp.sender == this.storage.player2.openSome(), 'Is not your turn!');
         }
 
         const dices: TList<TNat> = [];
@@ -168,11 +198,13 @@ export class FarkleGame {
         let seed: TNat = this.storage.seed;
         let diceCount = this.diceCount;
 
+        // Set dice count in case if player leaved some from previous move
         if (this.storage.currentPlayerDices.size() > 0) {
             diceCount = this.storage.currentPlayerDices.size();
         }
 
         for (let i = 0; i < diceCount; i = i + 1) {
+            // Save leaved dice and skip random generation for this dice
             if (leaveDiceIndexes.isSome() && leaveDiceIndexes.openSome().contains(i)) {
                 const leavedDice = getAtIndex({
                     list: this.storage.currentPlayerDices,
@@ -180,52 +212,58 @@ export class FarkleGame {
                 });
                 leavedDices.push(leavedDice);
             } else {
+                // Generate new random dice value
                 const currentDice = getDiceValue(seed);
                 seed = getNextRandomValue(seed);
                 dices.push(currentDice);
             }
         }
-        this.storage.currentPlayerDices = dices;
-        this.storage.currentPlayerLeavedDices = leavedDices;
+        // Store seed value for next move
         this.storage.seed = seed;
 
         const currentDicesPoints = calculateTotalPoints(dices);
 
+        // Check if current points is zero
         if (currentDicesPoints == 0) {
-            // TODO: add end move logic
+            // Player loses all move points
+            this.storage.moveStage = 0;
             this.storage.movePoints = 0;
+            this.storage.currentPlayerDices = [];
+            this.storage.currentPlayerLeavedDices = [];
         } else {
+            // Calculation of leaved dice points
             const leavedDicesPoints = calculateTotalPoints(leavedDices);
             this.storage.movePoints = leavedDicesPoints + currentDicesPoints;
+            this.storage.currentPlayerDices = dices;
+            this.storage.currentPlayerLeavedDices = leavedDices;
         }
 
-        if (
-            this.storage.movePoints + this.storage.player1Points >= this.maxPointsToWin ||
-            this.storage.movePoints + this.storage.player2Points >= this.maxPointsToWin
-        ) {
+        // Check if some player win
+        if (this.storage.movePoints + this.storage.players.get(Sp.sender) >= this.maxPointsToWin) {
+            // Game is finished!
             this.storage.state = Constants.GameState.Finished;
             this.storage.winner = Sp.some(Sp.sender);
+            // Transfer money to the winner!
+            Sp.transfer(Sp.unit, Sp.balance, Sp.contract<TUnit>(Sp.sender).openSome());
         } else {
+            // Increment move stage
             this.storage.moveStage = this.storage.moveStage + 1;
         }
     }
 
     @EntryPoint
     endMove() {
-        // Sp.verify(this.storage.state == Constants.GameState.Started, 'Game is not started yet!');
-        if (this.storage.currentPlayer == 1) {
-            Sp.verify(Sp.sender == this.storage.player1.openSome(), 'Is not your turn!');
-        } else {
-            Sp.verify(Sp.sender == this.storage.player2.openSome(), 'Is not your turn!');
-        }
+        Sp.verify(this.storage.state == Constants.GameState.Started, 'Game is not started yet!');
+        Sp.verify(this.storage.currentPlayer.openSome() == Sp.sender, 'Is not your turn!');
 
-        if (this.storage.currentPlayer == 1) {
-            this.storage.currentPlayer = 2;
-            this.storage.player1Points = this.storage.player1Points + this.storage.movePoints;
-        } else {
-            this.storage.currentPlayer = 1;
-            this.storage.player2Points = this.storage.player2Points + this.storage.movePoints;
-        }
+        // Set points for current user and clears state before next players move
+        this.storage.players.set(Sp.sender, this.storage.players.get(Sp.sender) + this.storage.movePoints);
+        this.storage.currentPlayer = Sp.some(
+            getNextKey({
+                keys: this.storage.players.keys(),
+                afterKey: this.storage.currentPlayer.openSome(),
+            }),
+        );
         this.storage.moveStage = 0;
         this.storage.movePoints = 0;
         this.storage.currentPlayerDices = [];
@@ -243,7 +281,7 @@ export class FarkleGameFactory {
     bytesToNatMap: TMap<TBytes, TNat> = Constants.BytesToNatMap;
 
     @EntryPoint
-    createNewGame() {
+    createNewGame(bet: TMutez) {
         // Calculate seed for random
         const randomBytes: TBytes = Sp.sha256(Sp.pack(Sp.createContractOperation(DummyContract).address as TString));
         let seed: TNat = 0;
@@ -257,17 +295,15 @@ export class FarkleGameFactory {
         const newContractAddress = Sp.createContract(FarkleGame, {
             creator: Sp.some(Sp.sender),
             state: Constants.GameState.Created,
-            player1: Sp.some(Sp.sender),
-            player2: Sp.none,
             seed: seed,
-            player1Points: 0,
-            player2Points: 0,
-            currentPlayer: 1,
             currentPlayerDices: [],
             currentPlayerLeavedDices: [],
-            moveStage: 0,
             winner: Sp.none,
+            moveStage: 0,
             movePoints: 0,
+            bet: bet,
+            players: [[Sp.sender, 0]],
+            currentPlayer: Sp.some(Sp.sender),
         });
 
         this.storage.activeGames.add(newContractAddress);
@@ -283,7 +319,7 @@ Dev.test({ name: 'FarkleGameFactory' }, () => {
     const fgf = Scenario.originate(new FarkleGameFactory());
     const bob = Scenario.testAccount('Bob');
 
-    Scenario.transfer(fgf.createNewGame(), {
+    Scenario.transfer(fgf.createNewGame(10), {
         sender: bob,
     });
     Scenario.verify(fgf.storage.activeGames.size() == 1);
