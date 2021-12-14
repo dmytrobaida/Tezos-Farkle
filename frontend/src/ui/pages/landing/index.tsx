@@ -1,16 +1,26 @@
 import { observer } from "mobx-react-lite";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Window, WindowContent, Cutout, Toolbar, WindowHeader } from "react95";
 
 import { BaseButton } from "ui/components";
 import { useAppStores } from "store";
+import welcomeFileUrl from "assets/welcome.md";
 
 import { PageContainer } from "./styled";
+import Markdown from "markdown-to-jsx";
 
 export default observer(() => {
   const { tezosStore } = useAppStores();
   const location = useLocation();
   const navigate = useNavigate();
+  const [markdown, setMarkdown] = useState("");
+
+  useEffect(() => {
+    fetch(welcomeFileUrl)
+      .then((res) => res.text())
+      .then(setMarkdown);
+  }, [setMarkdown]);
 
   const connectHandler = useCallback(async () => {
     await tezosStore.connect();
@@ -20,7 +30,17 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <BaseButton onClick={connectHandler}>Connect</BaseButton>
+      <Window>
+        <WindowHeader style={{ textAlign: "center" }}>Farkle!</WindowHeader>
+        <WindowContent>
+          <Cutout style={{ width: "70vw", height: "70vh" }}>
+            <Markdown className="md" children={markdown} />
+          </Cutout>
+        </WindowContent>
+        <Toolbar style={{ justifyContent: "center" }}>
+          <BaseButton onClick={connectHandler}>Start game</BaseButton>
+        </Toolbar>
+      </Window>
     </PageContainer>
   );
 });

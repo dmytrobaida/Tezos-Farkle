@@ -24,11 +24,11 @@ const GlobalStyle = createGlobalStyle`
   }
   body {
     font-family: 'ms_sans_serif';
+    margin: 0;
   }
-  * {
-    box-sizing: border-box;
+  *::not(.md) {
+    ${styleReset}
   }
-  ${styleReset}
 `;
 
 const rootStore = new RootStore();
