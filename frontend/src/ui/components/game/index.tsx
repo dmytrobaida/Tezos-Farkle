@@ -8,6 +8,7 @@ export const GameScene: React.FC<{
 }> = ({ onStart }) => {
   useEffect(() => {
     onStart(gameWindowId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <GameContainer id={gameWindowId} />;
 };

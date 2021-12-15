@@ -27,7 +27,7 @@ export class GameApi {
       const operation = await contract.methods[methodName](...args).send(
         params
       );
-      await operation.confirmation();
+      await operation.confirmation(1);
       return operation;
     } catch (err: any) {
       alert(err.message);

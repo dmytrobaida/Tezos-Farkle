@@ -52,6 +52,7 @@ export default observer(() => {
       map = [myPoints, ...map];
     }
     return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tezosStore, gameStore, gameStore.currentGame]);
 
   useEffect(() => {
@@ -63,6 +64,7 @@ export default observer(() => {
       }
       navigate("/main", { replace: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameStore.currentGame, tezosStore.address, navigate]);
 
   if (gameAddress == null) {
