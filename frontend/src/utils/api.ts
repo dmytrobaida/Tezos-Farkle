@@ -11,9 +11,7 @@ import {
   TezToMutezMultiplier,
 } from "./types";
 
-const test: string | undefined = "KT1ToxRcsZy4fgoMsP7cEihJpZYyzv9qWA6Q";
-const factoryContractAddress =
-  test || process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
+const factoryContractAddress = process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
 export class GameApi {
   constructor(private tezosToolkit: TezosToolkit) {}
 

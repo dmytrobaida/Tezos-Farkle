@@ -11,7 +11,6 @@ Farkle is played by two or more players, with each player in succession having a
 - At the beginning of each turn, the player throws all the dice at once.
 - After each throw, one or more scoring dice must be set aside (see sections on scoring below).
 - The player may then either end their turn and bank the score accumulated so far, or continue to throw the remaining dice.
-- If the player has scored all six dice, they have "hot dice" and may continue their turn with a new throw of all six dice, adding to the score they have already accumulated. There is no limit to the number of "hot dice" a player may roll in one turn.
 - If none of the dice score in any given throw, the player has "farkled" and all points for that turn are lost.
 - At the end of the player's turn, the dice are handed to the next player in succession (usually in clockwise rotation, viewing the table from above), and they have their turn.
 - Winner of the game takes all bank into his wallet.

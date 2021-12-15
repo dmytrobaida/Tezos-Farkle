@@ -28,14 +28,12 @@ export class TezosStore {
         name: "Local",
         rpc: tezosRpcUrl,
       });
-    } else {
-      await wallet.connect("granadanet");
     }
 
     const tezosToolkit = wallet.toTezos();
     tezosToolkit.setProvider({
       config: {
-        confirmationPollingIntervalSecond: 5,
+        confirmationPollingIntervalSecond: 1,
       },
     });
     const address = await tezosToolkit.wallet.pkh();
