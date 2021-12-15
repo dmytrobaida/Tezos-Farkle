@@ -12,6 +12,7 @@ import {
 } from "./types";
 
 const factoryContractAddress = process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
+
 export class GameApi {
   constructor(private tezosToolkit: TezosToolkit) {}
 
