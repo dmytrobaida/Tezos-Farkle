@@ -11,6 +11,7 @@ import {
   TezToMutezMultiplier,
 } from "./types";
 
+const factoryContractAddress = process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
 export class GameApi {
   constructor(private tezosToolkit: TezosToolkit) {}
 
@@ -39,8 +40,6 @@ export class GameApi {
     if (pointsToWin <= 0) {
       return [];
     }
-    const factoryContractAddress =
-      process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
 
     if (factoryContractAddress != null && factoryContractAddress !== "") {
       const contract = await this.tezosToolkit.wallet.at(
@@ -61,9 +60,6 @@ export class GameApi {
   }
 
   async loadAllGames() {
-    const factoryContractAddress =
-      process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
-      
     if (factoryContractAddress != null && factoryContractAddress !== "") {
       const contract = await this.tezosToolkit.wallet.at(
         factoryContractAddress

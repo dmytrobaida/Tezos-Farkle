@@ -2,6 +2,9 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { TempleWallet } from "@temple-wallet/dapp";
 import { GameApi } from "utils/api";
 
+const tezosRpcName = process.env.REACT_APP_TEZOS_RPC_NAME;
+const tezosRpcUrl = process.env.REACT_APP_TEZOS_RPC_URL;
+
 export class TezosStore {
   address = "";
   balance = 0;
@@ -21,9 +24,7 @@ export class TezosStore {
       alert("Temple Wallet not installed");
     }
     const wallet = new TempleWallet("Farkle");
-    const tezosRpcName = process.env.REACT_APP_TEZOS_RPC_NAME;
-    const tezosRpcUrl = process.env.REACT_APP_TEZOS_RPC_URL;
-    
+
     if (tezosRpcUrl != null && tezosRpcUrl !== "") {
       await wallet.connect({
         name: tezosRpcName || "not_set",
@@ -45,6 +46,8 @@ export class TezosStore {
         this.connected = wallet.connected;
         this.api = new GameApi(tezosToolkit);
       });
+    } else {
+      throw new Error("RPC is not set!");
     }
   }
 
