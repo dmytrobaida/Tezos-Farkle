@@ -189,6 +189,10 @@ export class FarkleGame {
             Sp.failWith('You should leave at least one dice to make this move!');
         }
 
+        if (this.storage.moveStage == 0) {
+            this.storage.currentPlayerDices = [];
+        }
+
         const dices: TList<TNat> = [];
         const leavedDices: TList<TNat> = [];
         let seed: TNat = this.storage.seed;
@@ -214,7 +218,8 @@ export class FarkleGame {
                 dices.push(currentDice);
             }
         }
-        // Store seed value for next move
+        // Set current player dices and store seed value for next move
+        this.storage.currentPlayerDices = dices;
         this.storage.seed = seed;
 
         const currentDicesPoints = calculateTotalPoints(dices);
@@ -224,7 +229,6 @@ export class FarkleGame {
             // Player loses all move points and move goes to next player
             this.storage.moveStage = 0;
             this.storage.movePoints = 0;
-            this.storage.currentPlayerDices = [];
             this.storage.currentPlayerLeavedDices = [];
             this.storage.currentPlayer = Sp.some(
                 getNextKey({
@@ -233,12 +237,13 @@ export class FarkleGame {
                 }),
             );
         } else {
+            this.storage.moveStage = this.storage.moveStage + 1;
+            for (const dice of leavedDices) {
+                this.storage.currentPlayerLeavedDices.push(dice);
+            }
             // Calculation of leaved dice points
             const leavedDicesPoints = calculateTotalPoints(leavedDices);
             this.storage.movePoints = leavedDicesPoints + currentDicesPoints;
-            this.storage.currentPlayerDices = dices;
-            this.storage.currentPlayerLeavedDices = leavedDices;
-            this.storage.moveStage = this.storage.moveStage + 1;
         }
 
         // Check if some player win

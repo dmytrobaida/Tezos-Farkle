@@ -33,6 +33,11 @@ export class TezosStore {
     }
 
     const tezosToolkit = wallet.toTezos();
+    tezosToolkit.setProvider({
+      config: {
+        confirmationPollingIntervalSecond: 5,
+      },
+    });
     const address = await tezosToolkit.wallet.pkh();
     const balance = await tezosToolkit.tz.getBalance(address);
 

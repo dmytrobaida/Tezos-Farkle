@@ -1,4 +1,9 @@
-import { TezosToolkit } from "@taquito/taquito";
+import {
+  ContractAbstraction,
+  SendParams,
+  TezosToolkit,
+  Wallet,
+} from "@taquito/taquito";
 
 import {
   FarkleGameFactoryState,
@@ -6,12 +11,29 @@ import {
   TezToMutezMultiplier,
 } from "./types";
 
-const test: string | undefined = "KT1TivVycy3hsrXF7J3GErv56m3PUZsYeSz1";
+const test: string | undefined = "KT1ToxRcsZy4fgoMsP7cEihJpZYyzv9qWA6Q";
 const factoryContractAddress =
   test || process.env.REACT_APP_FACTORY_CONTRACT_ADDRESS;
-
 export class GameApi {
   constructor(private tezosToolkit: TezosToolkit) {}
+
+  private async callApiMethod(
+    contract: ContractAbstraction<Wallet>,
+    methodName: string,
+    params: Partial<SendParams> | undefined,
+    ...args: any[]
+  ) {
+    try {
+      const operation = await contract.methods[methodName](...args).send(
+        params
+      );
+      await operation.confirmation();
+      return operation;
+    } catch (err: any) {
+      alert(err.message);
+      throw err;
+    }
+  }
 
   async createNewGame(bet: number, pointsToWin: number) {
     if (bet <= 0) {
@@ -24,10 +46,7 @@ export class GameApi {
       const contract = await this.tezosToolkit.wallet.at(
         factoryContractAddress
       );
-      const operation = await contract.methods
-        .createNewGame(bet, pointsToWin)
-        .send();
-      await operation.confirmation();
+      await this.callApiMethod(contract, "createNewGame", {}, bet, pointsToWin);
       const storage: FarkleGameFactoryState = await contract.storage();
       return storage.activeGames;
     }
@@ -58,28 +77,25 @@ export class GameApi {
       return null;
     }
     const contract = await this.tezosToolkit.wallet.at(gameAddress);
-    const operation = await contract.methods
-      .startGame()
-      .send({ amount: bet * TezToMutezMultiplier, mutez: true });
-    await operation.confirmation();
+    await this.callApiMethod(contract, "startGame", {
+      amount: bet * TezToMutezMultiplier,
+      mutez: true,
+    });
+
     const farkleGameState: FarkleGameState = await contract.storage();
     return farkleGameState;
   }
 
   async throwDices(gameAddress: string, leaveDiceIndexes: number[] = []) {
     const contract = await this.tezosToolkit.wallet.at(gameAddress);
-    const operation = await contract.methods
-      .throwDices(leaveDiceIndexes)
-      .send();
-    await operation.confirmation();
+    await this.callApiMethod(contract, "throwDices", {}, leaveDiceIndexes);
     const farkleGameState: FarkleGameState = await contract.storage();
     return farkleGameState;
   }
 
   async endMove(gameAddress: string) {
     const contract = await this.tezosToolkit.wallet.at(gameAddress);
-    const operation = await contract.methods.endMove().send();
-    await operation.confirmation();
+    await this.callApiMethod(contract, "endMove", {});
     const farkleGameState: FarkleGameState = await contract.storage();
     return farkleGameState;
   }

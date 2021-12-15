@@ -128,6 +128,7 @@ export default observer(() => {
           >
             End move
           </Button>
+          <Bar size={35} />
           <Button onClick={() => gameStore.updateCurrentGame(gameAddress)}>
             <i className="las la-redo-alt" style={{ fontSize: "25px" }}></i>
           </Button>

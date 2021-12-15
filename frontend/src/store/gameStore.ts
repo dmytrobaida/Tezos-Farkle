@@ -16,7 +16,10 @@ export class GameStore {
 
   async startGame(gameWindowId: string) {
     await this.game.start(gameWindowId);
-    if (this.currentGame != null) {
+    if (
+      this.currentGame != null &&
+      this.currentGame.currentPlayerDices.length > 0
+    ) {
       this.game.initGame(
         this.currentGame.currentPlayerDices.map((d) => d.toNumber())
       );
@@ -26,8 +29,6 @@ export class GameStore {
   }
 
   async throwDices(gameAddress: string) {
-    this.game.initGame([1, 2, 3]);
-    this.game.throwDices([1, 2, 3, 4, 5]);
     const api = this.getApi();
     const gameState = await api.getGameState(gameAddress);
     const selectedDices: number[] = [];
@@ -80,13 +81,13 @@ export class GameStore {
   }
 
   async createNewGame() {
-    const bet = parseInt(prompt("Enter bet in TEZ", "1") || "1");
+    const bet = parseInt(prompt("Enter bet in TEZ", "10") || "10");
     if (isNaN(bet) || bet <= 0) {
       alert("Please enter right value");
       return;
     }
     const pointsToWin = parseInt(
-      prompt("Enter max points to win the game", "1000") || "1000"
+      prompt("Enter max points to win the game", "2000") || "2000"
     );
     if (isNaN(pointsToWin) || pointsToWin <= 0) {
       alert("Please enter right value");
