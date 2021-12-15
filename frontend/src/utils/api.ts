@@ -44,7 +44,15 @@ export class GameApi {
       const contract = await this.tezosToolkit.wallet.at(
         factoryContractAddress
       );
-      await this.callApiMethod(contract, "createNewGame", {}, bet, pointsToWin);
+      await this.callApiMethod(
+        contract,
+        "createNewGame",
+        {
+          storageLimit: 10000,
+        },
+        bet,
+        pointsToWin
+      );
       const storage: FarkleGameFactoryState = await contract.storage();
       return storage.activeGames;
     }
@@ -66,7 +74,10 @@ export class GameApi {
           };
         })
       );
-      return gamesWithDetails;
+      const orderedGames = gamesWithDetails.sort(
+        (a, b) => a.id.toNumber() - b.id.toNumber()
+      );
+      return orderedGames;
     }
   }
 

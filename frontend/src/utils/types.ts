@@ -2,6 +2,7 @@ import { MichelsonMap } from "@taquito/taquito";
 import { BigNumber } from "bignumber.js";
 
 export interface FarkleGameState {
+  id: BigNumber;
   address: string;
   creator: string;
   state: BigNumber;

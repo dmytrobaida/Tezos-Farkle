@@ -72,6 +72,7 @@ export default observer(() => {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableHeadCell>ID</TableHeadCell>
                   <TableHeadCell>Contract address</TableHeadCell>
                   <TableHeadCell>Creator address</TableHeadCell>
                   <TableHeadCell>Bet</TableHeadCell>
@@ -82,6 +83,7 @@ export default observer(() => {
               <TableBody>
                 {gameStore.allGames.map((game, i) => (
                   <TableRow key={i}>
+                    <TableDataCell>{game.id.toNumber()}</TableDataCell>
                     <TableDataCell>{game.address}</TableDataCell>
                     <TableDataCell>{game.creator}</TableDataCell>
                     <TableDataCell>{game.bet.toNumber()} TEZ</TableDataCell>

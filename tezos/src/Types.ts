@@ -1,4 +1,5 @@
 export interface TFarkleGameStorage {
+    id: TNat;
     creator: TOption<TAddress>;
     state: TNat;
     seed: TNat;

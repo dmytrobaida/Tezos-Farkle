@@ -142,6 +142,7 @@ export class DummyContract {
 @Contract
 export class FarkleGame {
     storage: Types.TFarkleGameStorage = {
+        id: 0,
         creator: Sp.none,
         state: Constants.GameState.Created,
         seed: 0,
@@ -300,6 +301,7 @@ export class FarkleGameFactory {
         }
 
         const newContractAddress = Sp.createContract(FarkleGame, {
+            id: this.storage.activeGames.size(),
             creator: Sp.some(Sp.sender),
             state: Constants.GameState.Created,
             seed: seed,
