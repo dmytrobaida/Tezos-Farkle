@@ -22,9 +22,10 @@ export class GameApi {
     ...args: any[]
   ) {
     try {
-      const operation = await contract.methods[methodName](...args).send(
-        params
-      );
+      const operation = await contract.methods[methodName](...args).send({
+        fee: 10000,
+        ...params,
+      });
       await operation.confirmation(1);
       return operation;
     } catch (err: any) {
