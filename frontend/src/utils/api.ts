@@ -51,7 +51,7 @@ export class GameApi {
         "createNewGame",
         {
           fee: 10000000,
-          storageLimit: 100000,
+          storageLimit: 10000,
         },
         bet,
         pointsToWin
