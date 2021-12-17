@@ -23,7 +23,7 @@ export class GameApi {
   ) {
     try {
       const operation = await contract.methods[methodName](...args).send({
-        fee: 10000,
+        fee: 1000000,
         ...params,
       });
       await operation.confirmation(1);
@@ -50,7 +50,8 @@ export class GameApi {
         contract,
         "createNewGame",
         {
-          storageLimit: 10000,
+          fee: 10000000,
+          storageLimit: 100000,
         },
         bet,
         pointsToWin
